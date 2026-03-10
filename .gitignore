@@ -34,5 +34,3 @@ Thumbs.db
 *.log
 secrets.xcconfig
 *.env
-prompts/*
-private-docs/*
