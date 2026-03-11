@@ -60,8 +60,18 @@ final class DetailsViewController: BaseViewController {
         super.viewDidLoad()
         title = "Product Details"
         setupUI()
+        setupNavBar()
         bindViewModel()
         viewModel.loadProduct()
+    }
+
+    private func setupNavBar() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "cart"),
+            style: .plain,
+            target: self,
+            action: #selector(cartTapped)
+        )
     }
 
     private func setupUI() {
@@ -123,5 +133,9 @@ final class DetailsViewController: BaseViewController {
 
     @objc private func buyNowTapped() {
         viewModel.buyNow()
+    }
+
+    @objc private func cartTapped() {
+        viewModel.didTapCart()
     }
 }

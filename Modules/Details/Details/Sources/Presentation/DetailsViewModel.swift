@@ -7,6 +7,7 @@ import AnalyticsLib
 final class DetailsViewModel {
     enum NavigationEvent {
         case buyNow
+        case cartTapped
     }
 
     let navigation = PassthroughSubject<NavigationEvent, Never>()
@@ -81,5 +82,9 @@ final class DetailsViewModel {
         addToCart()
         analytics.track(AnalyticsEvent(name: "buy_now_tapped", parameters: ["product_id": productId]))
         navigation.send(.buyNow)
+    }
+
+    func didTapCart() {
+        navigation.send(.cartTapped)
     }
 }

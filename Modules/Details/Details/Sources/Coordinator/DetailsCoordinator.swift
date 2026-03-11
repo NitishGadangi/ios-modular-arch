@@ -39,6 +39,8 @@ public final class DetailsCoordinator: DetailsBuildable {
             switch event {
             case .buyNow:
                 self?.router.navigate(to: .checkout, style: .push)
+            case .cartTapped:
+                self?.router.navigate(to: .cart, style: .push)
             }
         }.store(in: &cancellables)
 
