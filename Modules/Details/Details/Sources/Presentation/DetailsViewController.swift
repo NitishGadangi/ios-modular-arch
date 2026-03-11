@@ -61,8 +61,8 @@ final class DetailsViewController: BaseViewController {
         title = "Product Details"
         setupUI()
         setupNavBar()
-        bindViewModel()
-        viewModel.loadProduct()
+        bindOutput()
+        viewModel.input.loadProduct.send()
     }
 
     private func setupNavBar() {
@@ -91,8 +91,8 @@ final class DetailsViewController: BaseViewController {
         contentStack.addArrangedSubview(buttonStack)
     }
 
-    private func bindViewModel() {
-        viewModel.$product
+    private func bindOutput() {
+        viewModel.output.product
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
             .sink { [weak self] product in
@@ -101,14 +101,14 @@ final class DetailsViewController: BaseViewController {
             }
             .store(in: &cancellables)
 
-        viewModel.$isLoading
+        viewModel.output.isLoading
             .receive(on: DispatchQueue.main)
             .sink { [weak self] loading in
                 self?.showLoading(loading)
             }
             .store(in: &cancellables)
 
-        viewModel.$addedToCart
+        viewModel.output.addedToCart
             .receive(on: DispatchQueue.main)
             .sink { [weak self] added in
                 self?.addToCartButton.setTitle(added ? "Added!" : "Add to Cart", for: .normal)
@@ -116,7 +116,7 @@ final class DetailsViewController: BaseViewController {
             }
             .store(in: &cancellables)
 
-        viewModel.$errorMessage
+        viewModel.output.errorMessage
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
@@ -128,14 +128,14 @@ final class DetailsViewController: BaseViewController {
     }
 
     @objc private func addToCartTapped() {
-        viewModel.addToCart()
+        viewModel.input.addToCart.send()
     }
 
     @objc private func buyNowTapped() {
-        viewModel.buyNow()
+        viewModel.input.buyNow.send()
     }
 
     @objc private func cartTapped() {
-        viewModel.didTapCart()
+        viewModel.input.tapCart.send()
     }
 }

@@ -13,13 +13,29 @@ final class CheckoutViewModel {
         case orderCompleted
     }
 
+    struct Input {
+        let placeOrder = PassthroughSubject<Void, Never>()
+        let goHome = PassthroughSubject<Void, Never>()
+    }
+
+    struct Output {
+        let cartItems: AnyPublisher<[CartItem], Never>
+        let totalPrice: AnyPublisher<Double, Never>
+        let isLoading: AnyPublisher<Bool, Never>
+        let orderSummary: AnyPublisher<OrderSummary?, Never>
+        let errorMessage: AnyPublisher<String?, Never>
+    }
+
+    let input = Input()
+    let output: Output
+
     weak var navigationDelegate: CheckoutViewModelNavigationDelegate?
 
-    @Published private(set) var cartItems: [CartItem] = []
-    @Published private(set) var totalPrice: Double = 0
-    @Published private(set) var isLoading = false
-    @Published private(set) var orderSummary: OrderSummary?
-    @Published private(set) var errorMessage: String?
+    @Published private var cartItems: [CartItem] = []
+    @Published private var totalPrice: Double = 0
+    @Published private var isLoading = false
+    @Published private var orderSummary: OrderSummary?
+    @Published private var errorMessage: String?
 
     private let placeOrderUseCase: PlaceOrderUseCase
     private let cartService: CartServiceProtocol
@@ -34,7 +50,17 @@ final class CheckoutViewModel {
         self.placeOrderUseCase = placeOrderUseCase
         self.cartService = cartService
         self.analytics = analytics
+
+        self.output = Output(
+            cartItems: _cartItems.projectedValue.eraseToAnyPublisher(),
+            totalPrice: _totalPrice.projectedValue.eraseToAnyPublisher(),
+            isLoading: _isLoading.projectedValue.eraseToAnyPublisher(),
+            orderSummary: _orderSummary.projectedValue.eraseToAnyPublisher(),
+            errorMessage: _errorMessage.projectedValue.eraseToAnyPublisher()
+        )
+
         bindCartService()
+        bindInputs()
     }
 
     private func bindCartService() {
@@ -47,7 +73,17 @@ final class CheckoutViewModel {
             .store(in: &cancellables)
     }
 
-    func placeOrder() {
+    private func bindInputs() {
+        input.placeOrder
+            .sink { [weak self] in self?.placeOrder() }
+            .store(in: &cancellables)
+
+        input.goHome
+            .sink { [weak self] in self?.goHome() }
+            .store(in: &cancellables)
+    }
+
+    private func placeOrder() {
         isLoading = true
         errorMessage = nil
 
@@ -75,7 +111,7 @@ final class CheckoutViewModel {
             .store(in: &cancellables)
     }
 
-    func goHome() {
+    private func goHome() {
         navigationDelegate?.checkoutViewModel(self, didRequest: .orderCompleted)
     }
 }

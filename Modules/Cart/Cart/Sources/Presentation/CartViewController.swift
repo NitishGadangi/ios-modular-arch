@@ -6,6 +6,7 @@ import UIComponents
 final class CartViewController: BaseViewController {
     private let viewModel: CartViewModel
     private var cancellables = Set<AnyCancellable>()
+    private var cartItems: [CartItem] = []
 
     private lazy var tableView: UITableView = {
         let table = UITableView(frame: .zero, style: .plain)
@@ -75,7 +76,7 @@ final class CartViewController: BaseViewController {
         super.viewDidLoad()
         title = "Cart"
         setupUI()
-        bindViewModel()
+        bindOutput()
     }
 
     private func setupUI() {
@@ -95,17 +96,18 @@ final class CartViewController: BaseViewController {
         ])
     }
 
-    private func bindViewModel() {
-        viewModel.$cartItems
+    private func bindOutput() {
+        viewModel.output.cartItems
             .receive(on: DispatchQueue.main)
             .sink { [weak self] items in
+                self?.cartItems = items
                 self?.tableView.reloadData()
                 self?.emptyLabel.isHidden = !items.isEmpty
                 self?.footerView.isHidden = items.isEmpty
             }
             .store(in: &cancellables)
 
-        viewModel.$totalPrice
+        viewModel.output.totalPrice
             .receive(on: DispatchQueue.main)
             .sink { [weak self] total in
                 if let totalLabel = self?.footerView.viewWithTag(100) as? UILabel {
@@ -116,23 +118,23 @@ final class CartViewController: BaseViewController {
     }
 
     @objc private func checkoutTapped() {
-        viewModel.didTapCheckout()
+        viewModel.input.tapCheckout.send()
     }
 }
 
 extension CartViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.cartItems.count
+        cartItems.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CartItemCell.reuseIdentifier, for: indexPath) as? CartItemCell else {
             return UITableViewCell()
         }
-        let item = viewModel.cartItems[indexPath.row]
+        let item = cartItems[indexPath.row]
         cell.configure(with: item)
         cell.onQuantityChanged = { [weak self] quantity in
-            self?.viewModel.updateQuantity(productId: item.productId, quantity: quantity)
+            self?.viewModel.input.updateQuantity.send((productId: item.productId, quantity: quantity))
         }
         return cell
     }
@@ -141,14 +143,14 @@ extension CartViewController: UITableViewDataSource {
 extension CartViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let item = viewModel.cartItems[indexPath.row]
-        viewModel.didSelectItem(productId: item.productId)
+        let item = cartItems[indexPath.row]
+        viewModel.input.selectItem.send(item.productId)
     }
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let item = viewModel.cartItems[indexPath.row]
-            viewModel.removeItem(productId: item.productId)
+            let item = cartItems[indexPath.row]
+            viewModel.input.removeItem.send(item.productId)
         }
     }
 }

@@ -1,0 +1,16 @@
+{
+    "id": "4",
+    "name": "USB-C Hub",
+    "price": 39.99,
+    "image_url": "usb_hub",
+    "description": "Versatile USB-C hub with 7 ports including HDMI 4K output, USB 3.0, SD card reader, and 100W power delivery pass-through. Compact and travel-friendly design.",
+    "specs": [
+        "HDMI 4K@60Hz output",
+        "3x USB 3.0 ports",
+        "SD/MicroSD card reader",
+        "100W Power Delivery",
+        "Compact aluminum body"
+    ],
+    "rating": 4.1,
+    "review_count": 67
+}

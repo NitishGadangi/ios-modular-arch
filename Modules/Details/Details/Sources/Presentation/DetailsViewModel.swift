@@ -14,12 +14,29 @@ final class DetailsViewModel {
         case cartTapped
     }
 
+    struct Input {
+        let loadProduct = PassthroughSubject<Void, Never>()
+        let addToCart = PassthroughSubject<Void, Never>()
+        let buyNow = PassthroughSubject<Void, Never>()
+        let tapCart = PassthroughSubject<Void, Never>()
+    }
+
+    struct Output {
+        let product: AnyPublisher<ProductDetail?, Never>
+        let isLoading: AnyPublisher<Bool, Never>
+        let errorMessage: AnyPublisher<String?, Never>
+        let addedToCart: AnyPublisher<Bool, Never>
+    }
+
+    let input = Input()
+    let output: Output
+
     weak var navigationDelegate: DetailsViewModelNavigationDelegate?
 
-    @Published private(set) var product: ProductDetail?
-    @Published private(set) var isLoading = false
-    @Published private(set) var errorMessage: String?
-    @Published private(set) var addedToCart = false
+    @Published private var product: ProductDetail?
+    @Published private var isLoading = false
+    @Published private var errorMessage: String?
+    @Published private var addedToCart = false
 
     private let productId: String
     private let getProductDetailUseCase: GetProductDetailUseCase
@@ -37,9 +54,36 @@ final class DetailsViewModel {
         self.getProductDetailUseCase = getProductDetailUseCase
         self.cartService = cartService
         self.analytics = analytics
+
+        self.output = Output(
+            product: _product.projectedValue.eraseToAnyPublisher(),
+            isLoading: _isLoading.projectedValue.eraseToAnyPublisher(),
+            errorMessage: _errorMessage.projectedValue.eraseToAnyPublisher(),
+            addedToCart: _addedToCart.projectedValue.eraseToAnyPublisher()
+        )
+
+        bindInputs()
     }
 
-    func loadProduct() {
+    private func bindInputs() {
+        input.loadProduct
+            .sink { [weak self] in self?.loadProduct() }
+            .store(in: &cancellables)
+
+        input.addToCart
+            .sink { [weak self] in self?.addToCart() }
+            .store(in: &cancellables)
+
+        input.buyNow
+            .sink { [weak self] in self?.buyNow() }
+            .store(in: &cancellables)
+
+        input.tapCart
+            .sink { [weak self] in self?.didTapCart() }
+            .store(in: &cancellables)
+    }
+
+    private func loadProduct() {
         isLoading = true
         errorMessage = nil
 
@@ -63,7 +107,7 @@ final class DetailsViewModel {
             .store(in: &cancellables)
     }
 
-    func addToCart() {
+    private func addToCart() {
         guard let product = product else { return }
         let item = CartItem(
             productId: product.id,
@@ -83,13 +127,13 @@ final class DetailsViewModel {
         }
     }
 
-    func buyNow() {
+    private func buyNow() {
         addToCart()
         analytics.track(AnalyticsEvent(name: "buy_now_tapped", parameters: ["product_id": productId]))
         navigationDelegate?.detailsViewModel(self, didRequest: .buyNow)
     }
 
-    func didTapCart() {
+    private func didTapCart() {
         navigationDelegate?.detailsViewModel(self, didRequest: .cartTapped)
     }
 }

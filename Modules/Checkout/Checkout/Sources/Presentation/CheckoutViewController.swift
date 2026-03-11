@@ -96,7 +96,7 @@ final class CheckoutViewController: BaseViewController {
         super.viewDidLoad()
         title = "Checkout"
         setupUI()
-        bindViewModel()
+        bindOutput()
     }
 
     private func setupUI() {
@@ -111,22 +111,22 @@ final class CheckoutViewController: BaseViewController {
         contentStack.addArrangedSubview(orderConfirmedStack)
     }
 
-    private func bindViewModel() {
-        viewModel.$cartItems
+    private func bindOutput() {
+        viewModel.output.cartItems
             .receive(on: DispatchQueue.main)
             .sink { [weak self] items in
                 self?.updateItemsList(items)
             }
             .store(in: &cancellables)
 
-        viewModel.$totalPrice
+        viewModel.output.totalPrice
             .receive(on: DispatchQueue.main)
             .sink { [weak self] total in
                 self?.totalLabel.text = String(format: "Total: $%.2f", total)
             }
             .store(in: &cancellables)
 
-        viewModel.$isLoading
+        viewModel.output.isLoading
             .receive(on: DispatchQueue.main)
             .sink { [weak self] loading in
                 self?.showLoading(loading)
@@ -134,7 +134,7 @@ final class CheckoutViewController: BaseViewController {
             }
             .store(in: &cancellables)
 
-        viewModel.$orderSummary
+        viewModel.output.orderSummary
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
             .sink { [weak self] summary in
@@ -142,7 +142,7 @@ final class CheckoutViewController: BaseViewController {
             }
             .store(in: &cancellables)
 
-        viewModel.$errorMessage
+        viewModel.output.errorMessage
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
@@ -172,10 +172,10 @@ final class CheckoutViewController: BaseViewController {
     }
 
     @objc private func placeOrderTapped() {
-        viewModel.placeOrder()
+        viewModel.input.placeOrder.send()
     }
 
     @objc private func goHomeTapped() {
-        viewModel.goHome()
+        viewModel.input.goHome.send()
     }
 }

@@ -22,7 +22,7 @@ final class HomeViewModelTests: XCTestCase {
         let spy = SpyNavDelegate()
         sut.navigationDelegate = spy
 
-        sut.didSelectProduct(id: "42")
+        sut.input.selectProduct.send("42")
 
         XCTAssertEqual(spy.receivedEvents.count, 1)
         if case .productSelected(let id) = spy.receivedEvents.first {
@@ -37,7 +37,7 @@ final class HomeViewModelTests: XCTestCase {
         let spy = SpyNavDelegate()
         sut.navigationDelegate = spy
 
-        sut.didTapCart()
+        sut.input.tapCart.send()
 
         XCTAssertEqual(spy.receivedEvents.count, 1)
         if case .cartTapped = spy.receivedEvents.first {} else {
@@ -52,13 +52,13 @@ final class HomeViewModelTests: XCTestCase {
         let sut = makeSUT(products: products)
 
         let expectation = expectation(description: "Products loaded")
-        sut.$products.dropFirst().sink { loadedProducts in
+        sut.output.products.dropFirst().sink { loadedProducts in
             XCTAssertEqual(loadedProducts.count, 1)
             XCTAssertEqual(loadedProducts.first?.name, "Test")
             expectation.fulfill()
         }.store(in: &cancellables)
 
-        sut.loadProducts()
+        sut.input.loadProducts.send()
         waitForExpectations(timeout: 2)
     }
 

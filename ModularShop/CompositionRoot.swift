@@ -33,8 +33,9 @@ final class CompositionRoot {
         self.logger = ConsoleLogger(minimumLevel: .debug)
         self.networkService = MockNetworkService()
         let cache = InMemoryEventCache()
+        let batcher = EventBatcher(cache: cache, batchSize: 5)
         let dispatcher = ConsoleAnalyticsDispatcher()
-        self.analyticsService = EventBatcher(cache: cache, dispatcher: dispatcher, batchSize: 5, flushInterval: 10)
+        self.analyticsService = AnalyticsService(batcher: batcher, dispatcher: dispatcher, flushInterval: 10)
         self.cartService = CartServiceImpl()
 
         logger.info("CompositionRoot initialized")

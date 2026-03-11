@@ -36,7 +36,8 @@ public final class MockNetworkService: NetworkServiceProtocol {
         case "/products":
             return "products"
         case let path where path.hasPrefix("/products/"):
-            return "product_detail"
+            let productId = String(path.dropFirst("/products/".count))
+            return "product_detail_\(productId)"
         case "/cart":
             return "cart"
         case "/checkout":

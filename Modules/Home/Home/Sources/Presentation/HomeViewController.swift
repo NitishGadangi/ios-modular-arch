@@ -6,6 +6,7 @@ import UIComponents
 final class HomeViewController: BaseViewController {
     private let viewModel: HomeViewModel
     private var cancellables = Set<AnyCancellable>()
+    private var products: [ProductSummary] = []
 
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -35,8 +36,8 @@ final class HomeViewController: BaseViewController {
         title = "ModularShop"
         setupUI()
         setupNavBar()
-        bindViewModel()
-        viewModel.loadProducts()
+        bindOutput()
+        viewModel.input.loadProducts.send()
     }
 
     private func setupUI() {
@@ -53,22 +54,23 @@ final class HomeViewController: BaseViewController {
         )
     }
 
-    private func bindViewModel() {
-        viewModel.$products
+    private func bindOutput() {
+        viewModel.output.products
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
+            .sink { [weak self] products in
+                self?.products = products
                 self?.collectionView.reloadData()
             }
             .store(in: &cancellables)
 
-        viewModel.$isLoading
+        viewModel.output.isLoading
             .receive(on: DispatchQueue.main)
             .sink { [weak self] loading in
                 self?.showLoading(loading)
             }
             .store(in: &cancellables)
 
-        viewModel.$errorMessage
+        viewModel.output.errorMessage
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
@@ -80,28 +82,28 @@ final class HomeViewController: BaseViewController {
     }
 
     @objc private func cartTapped() {
-        viewModel.didTapCart()
+        viewModel.input.tapCart.send()
     }
 }
 
 extension HomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        viewModel.products.count
+        products.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProductCell.reuseIdentifier, for: indexPath) as? ProductCell else {
             return UICollectionViewCell()
         }
-        cell.configure(with: viewModel.products[indexPath.item])
+        cell.configure(with: products[indexPath.item])
         return cell
     }
 }
 
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let product = viewModel.products[indexPath.item]
-        viewModel.didSelectProduct(id: product.id)
+        let product = products[indexPath.item]
+        viewModel.input.selectProduct.send(product.id)
     }
 }
 

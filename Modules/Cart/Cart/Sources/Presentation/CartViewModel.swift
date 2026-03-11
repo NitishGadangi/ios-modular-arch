@@ -13,10 +13,25 @@ final class CartViewModel {
         case checkoutTapped
     }
 
+    struct Input {
+        let selectItem = PassthroughSubject<String, Never>()
+        let tapCheckout = PassthroughSubject<Void, Never>()
+        let removeItem = PassthroughSubject<String, Never>()
+        let updateQuantity = PassthroughSubject<(productId: String, quantity: Int), Never>()
+    }
+
+    struct Output {
+        let cartItems: AnyPublisher<[CartItem], Never>
+        let totalPrice: AnyPublisher<Double, Never>
+    }
+
+    let input = Input()
+    let output: Output
+
     weak var navigationDelegate: CartViewModelNavigationDelegate?
 
-    @Published private(set) var cartItems: [CartItem] = []
-    @Published private(set) var totalPrice: Double = 0
+    @Published private var cartItems: [CartItem] = []
+    @Published private var totalPrice: Double = 0
 
     private let cartService: CartServiceProtocol
     private let analytics: AnalyticsServiceProtocol
@@ -25,7 +40,14 @@ final class CartViewModel {
     init(cartService: CartServiceProtocol, analytics: AnalyticsServiceProtocol) {
         self.cartService = cartService
         self.analytics = analytics
+
+        self.output = Output(
+            cartItems: _cartItems.projectedValue.eraseToAnyPublisher(),
+            totalPrice: _totalPrice.projectedValue.eraseToAnyPublisher()
+        )
+
         bindCartService()
+        bindInputs()
     }
 
     private func bindCartService() {
@@ -38,24 +60,35 @@ final class CartViewModel {
             .store(in: &cancellables)
     }
 
-    func didSelectItem(productId: String) {
-        navigationDelegate?.cartViewModel(self, didRequest: .productSelected(id: productId))
-    }
+    private func bindInputs() {
+        input.selectItem
+            .sink { [weak self] productId in
+                self?.navigationDelegate?.cartViewModel(self!, didRequest: .productSelected(id: productId))
+            }
+            .store(in: &cancellables)
 
-    func didTapCheckout() {
-        analytics.track(AnalyticsEvent(name: "checkout_started", parameters: [
-            "item_count": "\(cartItems.count)",
-            "total": "\(totalPrice)"
-        ]))
-        navigationDelegate?.cartViewModel(self, didRequest: .checkoutTapped)
-    }
+        input.tapCheckout
+            .sink { [weak self] in
+                guard let self else { return }
+                self.analytics.track(AnalyticsEvent(name: "checkout_started", parameters: [
+                    "item_count": "\(self.cartItems.count)",
+                    "total": "\(self.totalPrice)"
+                ]))
+                self.navigationDelegate?.cartViewModel(self, didRequest: .checkoutTapped)
+            }
+            .store(in: &cancellables)
 
-    func removeItem(productId: String) {
-        cartService.removeItem(productId: productId)
-        analytics.track(AnalyticsEvent(name: "cart_item_removed", parameters: ["product_id": productId]))
-    }
+        input.removeItem
+            .sink { [weak self] productId in
+                self?.cartService.removeItem(productId: productId)
+                self?.analytics.track(AnalyticsEvent(name: "cart_item_removed", parameters: ["product_id": productId]))
+            }
+            .store(in: &cancellables)
 
-    func updateQuantity(productId: String, quantity: Int) {
-        cartService.updateQuantity(productId: productId, quantity: quantity)
+        input.updateQuantity
+            .sink { [weak self] productId, quantity in
+                self?.cartService.updateQuantity(productId: productId, quantity: quantity)
+            }
+            .store(in: &cancellables)
     }
 }

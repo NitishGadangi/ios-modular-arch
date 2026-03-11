@@ -22,12 +22,12 @@ final class CheckoutViewModelTests: XCTestCase {
         let sut = makeSUT()
 
         let expectation = expectation(description: "Order placed")
-        sut.$orderSummary.compactMap { $0 }.sink { order in
+        sut.output.orderSummary.compactMap { $0 }.sink { order in
             XCTAssertEqual(order.orderId, "ORD-1")
             expectation.fulfill()
         }.store(in: &cancellables)
 
-        sut.placeOrder()
+        sut.input.placeOrder.send()
         waitForExpectations(timeout: 2)
     }
 
@@ -36,7 +36,7 @@ final class CheckoutViewModelTests: XCTestCase {
         let spy = SpyNavDelegate()
         sut.navigationDelegate = spy
 
-        sut.goHome()
+        sut.input.goHome.send()
 
         if case .orderCompleted = spy.receivedEvents.first {} else {
             XCTFail("Expected orderCompleted event")

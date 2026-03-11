@@ -13,11 +13,26 @@ final class HomeViewModel {
         case cartTapped
     }
 
+    struct Input {
+        let loadProducts = PassthroughSubject<Void, Never>()
+        let selectProduct = PassthroughSubject<String, Never>()
+        let tapCart = PassthroughSubject<Void, Never>()
+    }
+
+    struct Output {
+        let products: AnyPublisher<[ProductSummary], Never>
+        let isLoading: AnyPublisher<Bool, Never>
+        let errorMessage: AnyPublisher<String?, Never>
+    }
+
+    let input = Input()
+    let output: Output
+
     weak var navigationDelegate: HomeViewModelNavigationDelegate?
 
-    @Published private(set) var products: [ProductSummary] = []
-    @Published private(set) var isLoading = false
-    @Published private(set) var errorMessage: String?
+    @Published private var products: [ProductSummary] = []
+    @Published private var isLoading = false
+    @Published private var errorMessage: String?
 
     private let getProductsUseCase: GetProductsUseCase
     private let analytics: AnalyticsServiceProtocol
@@ -26,9 +41,31 @@ final class HomeViewModel {
     init(getProductsUseCase: GetProductsUseCase, analytics: AnalyticsServiceProtocol) {
         self.getProductsUseCase = getProductsUseCase
         self.analytics = analytics
+
+        self.output = Output(
+            products: _products.projectedValue.eraseToAnyPublisher(),
+            isLoading: _isLoading.projectedValue.eraseToAnyPublisher(),
+            errorMessage: _errorMessage.projectedValue.eraseToAnyPublisher()
+        )
+
+        bindInputs()
     }
 
-    func loadProducts() {
+    private func bindInputs() {
+        input.loadProducts
+            .sink { [weak self] in self?.loadProducts() }
+            .store(in: &cancellables)
+
+        input.selectProduct
+            .sink { [weak self] id in self?.didSelectProduct(id: id) }
+            .store(in: &cancellables)
+
+        input.tapCart
+            .sink { [weak self] in self?.didTapCart() }
+            .store(in: &cancellables)
+    }
+
+    private func loadProducts() {
         isLoading = true
         errorMessage = nil
 
@@ -52,12 +89,12 @@ final class HomeViewModel {
             .store(in: &cancellables)
     }
 
-    func didSelectProduct(id: String) {
+    private func didSelectProduct(id: String) {
         analytics.track(AnalyticsEvent(name: "product_tapped", parameters: ["product_id": id]))
         navigationDelegate?.homeViewModel(self, didRequest: .productSelected(id: id))
     }
 
-    func didTapCart() {
+    private func didTapCart() {
         navigationDelegate?.homeViewModel(self, didRequest: .cartTapped)
     }
 }
