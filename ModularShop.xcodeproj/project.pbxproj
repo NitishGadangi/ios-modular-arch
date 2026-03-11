@@ -16,6 +16,24 @@
 		5E6DDBF22F61520C0050BD78 /* NetworkLib in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDBF12F61520C0050BD78 /* NetworkLib */; };
 		5E6DDBF42F61520C0050BD78 /* SharedRouter in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDBF32F61520C0050BD78 /* SharedRouter */; };
 		5E6DDBF62F61520C0050BD78 /* UIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDBF52F61520C0050BD78 /* UIComponents */; };
+		5E6DDC8F2F615C760050BD78 /* AnalyticsLib in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDC8E2F615C760050BD78 /* AnalyticsLib */; };
+		5E6DDC912F615C760050BD78 /* Cart in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDC902F615C760050BD78 /* Cart */; };
+		5E6DDC932F615C760050BD78 /* Checkout in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDC922F615C760050BD78 /* Checkout */; };
+		5E6DDC952F615C760050BD78 /* Details in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDC942F615C760050BD78 /* Details */; };
+		5E6DDC972F615C760050BD78 /* Home in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDC962F615C760050BD78 /* Home */; };
+		5E6DDC992F615C760050BD78 /* LoggingLib in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDC982F615C760050BD78 /* LoggingLib */; };
+		5E6DDC9B2F615C760050BD78 /* NetworkLib in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDC9A2F615C760050BD78 /* NetworkLib */; };
+		5E6DDC9D2F615C760050BD78 /* SharedRouter in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDC9C2F615C760050BD78 /* SharedRouter */; };
+		5E6DDC9F2F615C760050BD78 /* UIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDC9E2F615C760050BD78 /* UIComponents */; };
+		5E6DDCCF2F615E960050BD78 /* AnalyticsLib in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDCCE2F615E960050BD78 /* AnalyticsLib */; };
+		5E6DDCD12F615E960050BD78 /* Cart in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDCD02F615E960050BD78 /* Cart */; };
+		5E6DDCD32F615E960050BD78 /* Checkout in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDCD22F615E960050BD78 /* Checkout */; };
+		5E6DDCD52F615E960050BD78 /* Details in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDCD42F615E960050BD78 /* Details */; };
+		5E6DDCD72F615E960050BD78 /* Home in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDCD62F615E960050BD78 /* Home */; };
+		5E6DDCD92F615E960050BD78 /* LoggingLib in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDCD82F615E960050BD78 /* LoggingLib */; };
+		5E6DDCDB2F615E960050BD78 /* NetworkLib in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDCDA2F615E960050BD78 /* NetworkLib */; };
+		5E6DDCDD2F615E960050BD78 /* SharedRouter in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDCDC2F615E960050BD78 /* SharedRouter */; };
+		5E6DDCDF2F615E960050BD78 /* UIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDCDE2F615E960050BD78 /* UIComponents */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +59,11 @@
 			path = ModularShop;
 			sourceTree = "<group>";
 		};
+		5E6DDD652F615EA60050BD78 /* Modules */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Modules;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,15 +71,33 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E6DDCD92F615E960050BD78 /* LoggingLib in Frameworks */,
 				5E6DDBF02F61520C0050BD78 /* LoggingLib in Frameworks */,
+				5E6DDCD52F615E960050BD78 /* Details in Frameworks */,
+				5E6DDCCF2F615E960050BD78 /* AnalyticsLib in Frameworks */,
 				5E6DDBF22F61520C0050BD78 /* NetworkLib in Frameworks */,
+				5E6DDC932F615C760050BD78 /* Checkout in Frameworks */,
 				5E6DDBE82F61520C0050BD78 /* Cart in Frameworks */,
+				5E6DDC9D2F615C760050BD78 /* SharedRouter in Frameworks */,
+				5E6DDCD12F615E960050BD78 /* Cart in Frameworks */,
+				5E6DDC912F615C760050BD78 /* Cart in Frameworks */,
+				5E6DDC9F2F615C760050BD78 /* UIComponents in Frameworks */,
 				5E6DDBEC2F61520C0050BD78 /* Details in Frameworks */,
+				5E6DDC992F615C760050BD78 /* LoggingLib in Frameworks */,
+				5E6DDCD32F615E960050BD78 /* Checkout in Frameworks */,
+				5E6DDCDD2F615E960050BD78 /* SharedRouter in Frameworks */,
+				5E6DDCDF2F615E960050BD78 /* UIComponents in Frameworks */,
 				5E6DDBF42F61520C0050BD78 /* SharedRouter in Frameworks */,
+				5E6DDC952F615C760050BD78 /* Details in Frameworks */,
 				5E6DDBE62F61520C0050BD78 /* AnalyticsLib in Frameworks */,
 				5E6DDBF62F61520C0050BD78 /* UIComponents in Frameworks */,
+				5E6DDCDB2F615E960050BD78 /* NetworkLib in Frameworks */,
+				5E6DDC9B2F615C760050BD78 /* NetworkLib in Frameworks */,
 				5E6DDBEE2F61520C0050BD78 /* Home in Frameworks */,
 				5E6DDBEA2F61520C0050BD78 /* Checkout in Frameworks */,
+				5E6DDC8F2F615C760050BD78 /* AnalyticsLib in Frameworks */,
+				5E6DDCD72F615E960050BD78 /* Home in Frameworks */,
+				5E6DDC972F615C760050BD78 /* Home in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,6 +107,7 @@
 		5E6DDBA92F614FBF0050BD78 = {
 			isa = PBXGroup;
 			children = (
+				5E6DDD652F615EA60050BD78 /* Modules */,
 				5E6DDBB42F614FBF0050BD78 /* ModularShop */,
 				5E6DDBB32F614FBF0050BD78 /* Products */,
 			);
@@ -108,6 +150,24 @@
 				5E6DDBF12F61520C0050BD78 /* NetworkLib */,
 				5E6DDBF32F61520C0050BD78 /* SharedRouter */,
 				5E6DDBF52F61520C0050BD78 /* UIComponents */,
+				5E6DDC8E2F615C760050BD78 /* AnalyticsLib */,
+				5E6DDC902F615C760050BD78 /* Cart */,
+				5E6DDC922F615C760050BD78 /* Checkout */,
+				5E6DDC942F615C760050BD78 /* Details */,
+				5E6DDC962F615C760050BD78 /* Home */,
+				5E6DDC982F615C760050BD78 /* LoggingLib */,
+				5E6DDC9A2F615C760050BD78 /* NetworkLib */,
+				5E6DDC9C2F615C760050BD78 /* SharedRouter */,
+				5E6DDC9E2F615C760050BD78 /* UIComponents */,
+				5E6DDCCE2F615E960050BD78 /* AnalyticsLib */,
+				5E6DDCD02F615E960050BD78 /* Cart */,
+				5E6DDCD22F615E960050BD78 /* Checkout */,
+				5E6DDCD42F615E960050BD78 /* Details */,
+				5E6DDCD62F615E960050BD78 /* Home */,
+				5E6DDCD82F615E960050BD78 /* LoggingLib */,
+				5E6DDCDA2F615E960050BD78 /* NetworkLib */,
+				5E6DDCDC2F615E960050BD78 /* SharedRouter */,
+				5E6DDCDE2F615E960050BD78 /* UIComponents */,
 			);
 			productName = ModularShop;
 			productReference = 5E6DDBB22F614FBF0050BD78 /* ModularShop.app */;
@@ -139,7 +199,7 @@
 			mainGroup = 5E6DDBA92F614FBF0050BD78;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				5E6DDBE42F61520C0050BD78 /* XCLocalSwiftPackageReference "../ios-modular-arch" */,
+				5E6DDCCD2F615E960050BD78 /* XCLocalSwiftPackageReference "../ios-modular-arch" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5E6DDBB32F614FBF0050BD78 /* Products */;
@@ -386,7 +446,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		5E6DDBE42F61520C0050BD78 /* XCLocalSwiftPackageReference "../ios-modular-arch" */ = {
+		5E6DDCCD2F615E960050BD78 /* XCLocalSwiftPackageReference "../ios-modular-arch" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../ios-modular-arch";
 		};
@@ -426,6 +486,78 @@
 			productName = SharedRouter;
 		};
 		5E6DDBF52F61520C0050BD78 /* UIComponents */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = UIComponents;
+		};
+		5E6DDC8E2F615C760050BD78 /* AnalyticsLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AnalyticsLib;
+		};
+		5E6DDC902F615C760050BD78 /* Cart */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Cart;
+		};
+		5E6DDC922F615C760050BD78 /* Checkout */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Checkout;
+		};
+		5E6DDC942F615C760050BD78 /* Details */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Details;
+		};
+		5E6DDC962F615C760050BD78 /* Home */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Home;
+		};
+		5E6DDC982F615C760050BD78 /* LoggingLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LoggingLib;
+		};
+		5E6DDC9A2F615C760050BD78 /* NetworkLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NetworkLib;
+		};
+		5E6DDC9C2F615C760050BD78 /* SharedRouter */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SharedRouter;
+		};
+		5E6DDC9E2F615C760050BD78 /* UIComponents */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = UIComponents;
+		};
+		5E6DDCCE2F615E960050BD78 /* AnalyticsLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AnalyticsLib;
+		};
+		5E6DDCD02F615E960050BD78 /* Cart */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Cart;
+		};
+		5E6DDCD22F615E960050BD78 /* Checkout */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Checkout;
+		};
+		5E6DDCD42F615E960050BD78 /* Details */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Details;
+		};
+		5E6DDCD62F615E960050BD78 /* Home */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Home;
+		};
+		5E6DDCD82F615E960050BD78 /* LoggingLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LoggingLib;
+		};
+		5E6DDCDA2F615E960050BD78 /* NetworkLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NetworkLib;
+		};
+		5E6DDCDC2F615E960050BD78 /* SharedRouter */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SharedRouter;
+		};
+		5E6DDCDE2F615E960050BD78 /* UIComponents */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = UIComponents;
 		};
