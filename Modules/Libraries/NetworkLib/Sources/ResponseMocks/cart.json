@@ -1,0 +1,11 @@
+{
+    "items": [
+        {
+            "product_id": "1",
+            "name": "Wireless Headphones",
+            "price": 79.99,
+            "quantity": 1
+        }
+    ],
+    "total": 79.99
+}

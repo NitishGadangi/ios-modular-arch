@@ -1,0 +1,30 @@
+[
+    {
+        "id": "1",
+        "name": "Wireless Headphones",
+        "price": 79.99,
+        "image_url": "headphones",
+        "description": "Premium wireless headphones with noise cancellation"
+    },
+    {
+        "id": "2",
+        "name": "Smart Watch",
+        "price": 199.99,
+        "image_url": "smartwatch",
+        "description": "Feature-rich smartwatch with health monitoring"
+    },
+    {
+        "id": "3",
+        "name": "Laptop Stand",
+        "price": 49.99,
+        "image_url": "laptopstand",
+        "description": "Ergonomic aluminum laptop stand"
+    },
+    {
+        "id": "4",
+        "name": "USB-C Hub",
+        "price": 39.99,
+        "image_url": "usbhub",
+        "description": "7-in-1 USB-C hub with HDMI output"
+    }
+]
