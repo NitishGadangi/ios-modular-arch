@@ -4,13 +4,18 @@ import DetailsInterface
 import CartInterface
 import AnalyticsLib
 
+protocol DetailsViewModelNavigationDelegate: AnyObject {
+    func detailsViewModel(_ viewModel: DetailsViewModel, didRequest event: DetailsViewModel.NavigationEvent)
+}
+
 final class DetailsViewModel {
     enum NavigationEvent {
         case buyNow
         case cartTapped
     }
 
-    let navigation = PassthroughSubject<NavigationEvent, Never>()
+    weak var navigationDelegate: DetailsViewModelNavigationDelegate?
+
     @Published private(set) var product: ProductDetail?
     @Published private(set) var isLoading = false
     @Published private(set) var errorMessage: String?
@@ -81,10 +86,10 @@ final class DetailsViewModel {
     func buyNow() {
         addToCart()
         analytics.track(AnalyticsEvent(name: "buy_now_tapped", parameters: ["product_id": productId]))
-        navigation.send(.buyNow)
+        navigationDelegate?.detailsViewModel(self, didRequest: .buyNow)
     }
 
     func didTapCart() {
-        navigation.send(.cartTapped)
+        navigationDelegate?.detailsViewModel(self, didRequest: .cartTapped)
     }
 }

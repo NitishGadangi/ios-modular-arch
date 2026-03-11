@@ -1,5 +1,4 @@
 import UIKit
-import Combine
 import DetailsInterface
 import CartInterface
 import SharedRouterInterface
@@ -11,7 +10,6 @@ public final class DetailsCoordinator: DetailsBuildable {
     private let networkService: NetworkServiceProtocol
     private let cartService: CartServiceProtocol
     private let analytics: AnalyticsServiceProtocol
-    private var cancellables = Set<AnyCancellable>()
 
     public init(
         router: SharedRouterProtocol,
@@ -34,16 +32,18 @@ public final class DetailsCoordinator: DetailsBuildable {
             cartService: cartService,
             analytics: analytics
         )
-
-        viewModel.navigation.sink { [weak self] event in
-            switch event {
-            case .buyNow:
-                self?.router.navigate(to: .checkout, style: .push)
-            case .cartTapped:
-                self?.router.navigate(to: .cart, style: .push)
-            }
-        }.store(in: &cancellables)
-
+        viewModel.navigationDelegate = self
         return DetailsViewController(viewModel: viewModel)
+    }
+}
+
+extension DetailsCoordinator: DetailsViewModelNavigationDelegate {
+    func detailsViewModel(_ viewModel: DetailsViewModel, didRequest event: DetailsViewModel.NavigationEvent) {
+        switch event {
+        case .buyNow:
+            router.navigate(to: .checkout, style: .push)
+        case .cartTapped:
+            router.navigate(to: .cart, style: .push)
+        }
     }
 }

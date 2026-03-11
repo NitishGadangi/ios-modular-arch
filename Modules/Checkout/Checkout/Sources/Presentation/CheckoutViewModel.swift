@@ -4,12 +4,17 @@ import CheckoutInterface
 import CartInterface
 import AnalyticsLib
 
+protocol CheckoutViewModelNavigationDelegate: AnyObject {
+    func checkoutViewModel(_ viewModel: CheckoutViewModel, didRequest event: CheckoutViewModel.NavigationEvent)
+}
+
 final class CheckoutViewModel {
     enum NavigationEvent {
         case orderCompleted
     }
 
-    let navigation = PassthroughSubject<NavigationEvent, Never>()
+    weak var navigationDelegate: CheckoutViewModelNavigationDelegate?
+
     @Published private(set) var cartItems: [CartItem] = []
     @Published private(set) var totalPrice: Double = 0
     @Published private(set) var isLoading = false
@@ -71,6 +76,6 @@ final class CheckoutViewModel {
     }
 
     func goHome() {
-        navigation.send(.orderCompleted)
+        navigationDelegate?.checkoutViewModel(self, didRequest: .orderCompleted)
     }
 }

@@ -19,12 +19,7 @@ final class CheckoutViewModelTests: XCTestCase {
     }
 
     func testPlaceOrderSetsOrderSummary() {
-        let summary = OrderSummary(orderId: "ORD-1", status: "confirmed", total: 50.0, estimatedDelivery: "2024-03-20")
-        let repo = StubCheckoutRepository(summary: summary)
-        let useCase = PlaceOrderUseCase(repository: repo)
-        let cart = StubCartService()
-        let analytics = StubAnalytics()
-        let sut = CheckoutViewModel(placeOrderUseCase: useCase, cartService: cart, analytics: analytics)
+        let sut = makeSUT()
 
         let expectation = expectation(description: "Order placed")
         sut.$orderSummary.compactMap { $0 }.sink { order in
@@ -36,21 +31,31 @@ final class CheckoutViewModelTests: XCTestCase {
         waitForExpectations(timeout: 2)
     }
 
-    func testGoHomeEmitsNavigation() {
+    func testGoHomeCallsDelegate() {
+        let sut = makeSUT()
+        let spy = SpyNavDelegate()
+        sut.navigationDelegate = spy
+
+        sut.goHome()
+
+        if case .orderCompleted = spy.receivedEvents.first {} else {
+            XCTFail("Expected orderCompleted event")
+        }
+    }
+
+    private func makeSUT() -> CheckoutViewModel {
         let summary = OrderSummary(orderId: "ORD-1", status: "confirmed", total: 50.0, estimatedDelivery: "2024-03-20")
         let repo = StubCheckoutRepository(summary: summary)
         let useCase = PlaceOrderUseCase(repository: repo)
-        let cart = StubCartService()
-        let analytics = StubAnalytics()
-        let sut = CheckoutViewModel(placeOrderUseCase: useCase, cartService: cart, analytics: analytics)
+        return CheckoutViewModel(placeOrderUseCase: useCase, cartService: StubCartService(), analytics: StubAnalytics())
+    }
+}
 
-        let expectation = expectation(description: "Nav event")
-        sut.navigation.sink { event in
-            if case .orderCompleted = event { expectation.fulfill() }
-        }.store(in: &cancellables)
+private final class SpyNavDelegate: CheckoutViewModelNavigationDelegate {
+    var receivedEvents: [CheckoutViewModel.NavigationEvent] = []
 
-        sut.goHome()
-        waitForExpectations(timeout: 1)
+    func checkoutViewModel(_ viewModel: CheckoutViewModel, didRequest event: CheckoutViewModel.NavigationEvent) {
+        receivedEvents.append(event)
     }
 }
 

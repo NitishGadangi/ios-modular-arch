@@ -3,13 +3,18 @@ import Combine
 import HomeInterface
 import AnalyticsLib
 
+protocol HomeViewModelNavigationDelegate: AnyObject {
+    func homeViewModel(_ viewModel: HomeViewModel, didRequest event: HomeViewModel.NavigationEvent)
+}
+
 final class HomeViewModel {
     enum NavigationEvent {
         case productSelected(id: String)
         case cartTapped
     }
 
-    let navigation = PassthroughSubject<NavigationEvent, Never>()
+    weak var navigationDelegate: HomeViewModelNavigationDelegate?
+
     @Published private(set) var products: [ProductSummary] = []
     @Published private(set) var isLoading = false
     @Published private(set) var errorMessage: String?
@@ -49,10 +54,10 @@ final class HomeViewModel {
 
     func didSelectProduct(id: String) {
         analytics.track(AnalyticsEvent(name: "product_tapped", parameters: ["product_id": id]))
-        navigation.send(.productSelected(id: id))
+        navigationDelegate?.homeViewModel(self, didRequest: .productSelected(id: id))
     }
 
     func didTapCart() {
-        navigation.send(.cartTapped)
+        navigationDelegate?.homeViewModel(self, didRequest: .cartTapped)
     }
 }

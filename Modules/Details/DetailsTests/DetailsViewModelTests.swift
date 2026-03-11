@@ -19,20 +19,7 @@ final class DetailsViewModelTests: XCTestCase {
     }
 
     func testLoadProductSetsProduct() {
-        let detail = ProductDetail(
-            id: "1", name: "Test", price: 29.99, imageUrl: "img",
-            description: "desc", specs: ["Spec1"], rating: 4.0, reviewCount: 10
-        )
-        let repo = StubDetailsRepository(detail: detail)
-        let useCase = GetProductDetailUseCase(repository: repo)
-        let cart = StubCartService()
-        let analytics = StubAnalytics()
-        let sut = DetailsViewModel(
-            productId: "1",
-            getProductDetailUseCase: useCase,
-            cartService: cart,
-            analytics: analytics
-        )
+        let sut = makeSUT()
 
         let expectation = expectation(description: "Product loaded")
         sut.$product.compactMap { $0 }.sink { product in
@@ -44,35 +31,57 @@ final class DetailsViewModelTests: XCTestCase {
         waitForExpectations(timeout: 2)
     }
 
-    func testBuyNowEmitsNavigation() {
-        let detail = ProductDetail(
-            id: "1", name: "Test", price: 29.99, imageUrl: "img",
-            description: "desc", specs: [], rating: 4.0, reviewCount: 10
-        )
-        let repo = StubDetailsRepository(detail: detail)
-        let useCase = GetProductDetailUseCase(repository: repo)
-        let cart = StubCartService()
-        let analytics = StubAnalytics()
-        let sut = DetailsViewModel(
-            productId: "1",
-            getProductDetailUseCase: useCase,
-            cartService: cart,
-            analytics: analytics
-        )
+    func testBuyNowCallsDelegate() {
+        let sut = makeSUT()
+        let spy = SpyNavDelegate()
+        sut.navigationDelegate = spy
 
-        // Load product first so buyNow has something to add
         let loadExp = expectation(description: "loaded")
         sut.$product.compactMap { $0 }.sink { _ in loadExp.fulfill() }.store(in: &cancellables)
         sut.loadProduct()
         waitForExpectations(timeout: 2)
 
-        let navExp = expectation(description: "Nav event")
-        sut.navigation.sink { event in
-            if case .buyNow = event { navExp.fulfill() }
-        }.store(in: &cancellables)
-
         sut.buyNow()
-        waitForExpectations(timeout: 1)
+
+        XCTAssertEqual(spy.receivedEvents.count, 1)
+        if case .buyNow = spy.receivedEvents.first {} else {
+            XCTFail("Expected buyNow event")
+        }
+    }
+
+    func testCartTappedCallsDelegate() {
+        let sut = makeSUT()
+        let spy = SpyNavDelegate()
+        sut.navigationDelegate = spy
+
+        sut.didTapCart()
+
+        if case .cartTapped = spy.receivedEvents.first {} else {
+            XCTFail("Expected cartTapped event")
+        }
+    }
+
+    private func makeSUT() -> DetailsViewModel {
+        let detail = ProductDetail(
+            id: "1", name: "Test", price: 29.99, imageUrl: "img",
+            description: "desc", specs: ["Spec1"], rating: 4.0, reviewCount: 10
+        )
+        let repo = StubDetailsRepository(detail: detail)
+        let useCase = GetProductDetailUseCase(repository: repo)
+        return DetailsViewModel(
+            productId: "1",
+            getProductDetailUseCase: useCase,
+            cartService: StubCartService(),
+            analytics: StubAnalytics()
+        )
+    }
+}
+
+private final class SpyNavDelegate: DetailsViewModelNavigationDelegate {
+    var receivedEvents: [DetailsViewModel.NavigationEvent] = []
+
+    func detailsViewModel(_ viewModel: DetailsViewModel, didRequest event: DetailsViewModel.NavigationEvent) {
+        receivedEvents.append(event)
     }
 }
 

@@ -1,5 +1,4 @@
 import UIKit
-import Combine
 import CartInterface
 import SharedRouterInterface
 import AnalyticsLib
@@ -8,7 +7,6 @@ public final class CartCoordinator: CartBuildable {
     private let router: SharedRouterProtocol
     private let cartService: CartServiceProtocol
     private let analytics: AnalyticsServiceProtocol
-    private var cancellables = Set<AnyCancellable>()
 
     public init(router: SharedRouterProtocol, cartService: CartServiceProtocol, analytics: AnalyticsServiceProtocol) {
         self.router = router
@@ -18,16 +16,18 @@ public final class CartCoordinator: CartBuildable {
 
     public func buildCartScreen() -> UIViewController {
         let viewModel = CartViewModel(cartService: cartService, analytics: analytics)
-
-        viewModel.navigation.sink { [weak self] event in
-            switch event {
-            case .productSelected(let id):
-                self?.router.navigate(to: .productDetail(productId: id), style: .push)
-            case .checkoutTapped:
-                self?.router.navigate(to: .checkout, style: .push)
-            }
-        }.store(in: &cancellables)
-
+        viewModel.navigationDelegate = self
         return CartViewController(viewModel: viewModel)
+    }
+}
+
+extension CartCoordinator: CartViewModelNavigationDelegate {
+    func cartViewModel(_ viewModel: CartViewModel, didRequest event: CartViewModel.NavigationEvent) {
+        switch event {
+        case .productSelected(let id):
+            router.navigate(to: .productDetail(productId: id), style: .push)
+        case .checkoutTapped:
+            router.navigate(to: .checkout, style: .push)
+        }
     }
 }

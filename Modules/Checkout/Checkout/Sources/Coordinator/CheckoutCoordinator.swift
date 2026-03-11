@@ -1,5 +1,4 @@
 import UIKit
-import Combine
 import CheckoutInterface
 import CartInterface
 import SharedRouterInterface
@@ -11,7 +10,6 @@ public final class CheckoutCoordinator: CheckoutBuildable {
     private let networkService: NetworkServiceProtocol
     private let cartService: CartServiceProtocol
     private let analytics: AnalyticsServiceProtocol
-    private var cancellables = Set<AnyCancellable>()
 
     public init(
         router: SharedRouterProtocol,
@@ -33,14 +31,16 @@ public final class CheckoutCoordinator: CheckoutBuildable {
             cartService: cartService,
             analytics: analytics
         )
-
-        viewModel.navigation.sink { [weak self] event in
-            switch event {
-            case .orderCompleted:
-                self?.router.navigate(to: .home, style: .replaceRoot)
-            }
-        }.store(in: &cancellables)
-
+        viewModel.navigationDelegate = self
         return CheckoutViewController(viewModel: viewModel)
+    }
+}
+
+extension CheckoutCoordinator: CheckoutViewModelNavigationDelegate {
+    func checkoutViewModel(_ viewModel: CheckoutViewModel, didRequest event: CheckoutViewModel.NavigationEvent) {
+        switch event {
+        case .orderCompleted:
+            router.navigate(to: .home, style: .replaceRoot)
+        }
     }
 }

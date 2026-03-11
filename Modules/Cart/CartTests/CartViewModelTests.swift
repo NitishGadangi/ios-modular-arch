@@ -8,49 +8,43 @@ final class CartViewModelTests: XCTestCase {
     var sut: CartViewModel!
     var mockCartService: MockCartService!
     var mockAnalytics: MockAnalyticsService!
-    var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
         super.setUp()
         mockCartService = MockCartService()
         mockAnalytics = MockAnalyticsService()
         sut = CartViewModel(cartService: mockCartService, analytics: mockAnalytics)
-        cancellables = []
     }
 
     override func tearDown() {
-        cancellables = nil
         sut = nil
         mockAnalytics = nil
         mockCartService = nil
         super.tearDown()
     }
 
-    func testNavigationEventOnProductSelected() {
-        let expectation = expectation(description: "Nav event")
-
-        sut.navigation.sink { event in
-            if case .productSelected(let id) = event {
-                XCTAssertEqual(id, "1")
-                expectation.fulfill()
-            }
-        }.store(in: &cancellables)
+    func testNavigationOnProductSelected() {
+        let spy = SpyNavDelegate()
+        sut.navigationDelegate = spy
 
         sut.didSelectItem(productId: "1")
-        waitForExpectations(timeout: 1)
+
+        if case .productSelected(let id) = spy.receivedEvents.first {
+            XCTAssertEqual(id, "1")
+        } else {
+            XCTFail("Expected productSelected event")
+        }
     }
 
-    func testNavigationEventOnCheckout() {
-        let expectation = expectation(description: "Checkout event")
-
-        sut.navigation.sink { event in
-            if case .checkoutTapped = event {
-                expectation.fulfill()
-            }
-        }.store(in: &cancellables)
+    func testNavigationOnCheckout() {
+        let spy = SpyNavDelegate()
+        sut.navigationDelegate = spy
 
         sut.didTapCheckout()
-        waitForExpectations(timeout: 1)
+
+        if case .checkoutTapped = spy.receivedEvents.first {} else {
+            XCTFail("Expected checkoutTapped event")
+        }
     }
 
     func testCheckoutTracksAnalytics() {
@@ -64,7 +58,13 @@ final class CartViewModelTests: XCTestCase {
     }
 }
 
-// MARK: - Mocks
+private final class SpyNavDelegate: CartViewModelNavigationDelegate {
+    var receivedEvents: [CartViewModel.NavigationEvent] = []
+
+    func cartViewModel(_ viewModel: CartViewModel, didRequest event: CartViewModel.NavigationEvent) {
+        receivedEvents.append(event)
+    }
+}
 
 final class MockCartService: CartServiceProtocol {
     let items = CurrentValueSubject<[CartItem], Never>([])

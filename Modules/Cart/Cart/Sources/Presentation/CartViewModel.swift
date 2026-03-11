@@ -1,8 +1,11 @@
 import Foundation
 import Combine
 import CartInterface
-import SharedRouterInterface
 import AnalyticsLib
+
+protocol CartViewModelNavigationDelegate: AnyObject {
+    func cartViewModel(_ viewModel: CartViewModel, didRequest event: CartViewModel.NavigationEvent)
+}
 
 final class CartViewModel {
     enum NavigationEvent {
@@ -10,7 +13,8 @@ final class CartViewModel {
         case checkoutTapped
     }
 
-    let navigation = PassthroughSubject<NavigationEvent, Never>()
+    weak var navigationDelegate: CartViewModelNavigationDelegate?
+
     @Published private(set) var cartItems: [CartItem] = []
     @Published private(set) var totalPrice: Double = 0
 
@@ -35,7 +39,7 @@ final class CartViewModel {
     }
 
     func didSelectItem(productId: String) {
-        navigation.send(.productSelected(id: productId))
+        navigationDelegate?.cartViewModel(self, didRequest: .productSelected(id: productId))
     }
 
     func didTapCheckout() {
@@ -43,7 +47,7 @@ final class CartViewModel {
             "item_count": "\(cartItems.count)",
             "total": "\(totalPrice)"
         ]))
-        navigation.send(.checkoutTapped)
+        navigationDelegate?.cartViewModel(self, didRequest: .checkoutTapped)
     }
 
     func removeItem(productId: String) {
