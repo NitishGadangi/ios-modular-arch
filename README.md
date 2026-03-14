@@ -50,6 +50,7 @@ The project splits into **Feature Modules** (screens and business logic) and **L
 | **UIComponents** | Base view controller, theme colours, layout helpers |
 
 ### Dependency Graph
+Okay! I agree this looks shit !! But I will soon update this with a much better dependency graph diagram.
 
 ```mermaid
 graph TD

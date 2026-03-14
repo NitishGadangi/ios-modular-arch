@@ -26,9 +26,7 @@ let package = Package(
         .library(name: "Cart", targets: ["Cart"]),
         .library(name: "Checkout", targets: ["Checkout"]),
     ],
-    dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.15.0"),
-    ],
+    dependencies: [],
     targets: [
         // MARK: - Libraries
 
@@ -150,7 +148,6 @@ let package = Package(
                 "HomeInterface",
                 "NetworkLib",
                 "AnalyticsLib",
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             path: "Modules/Home/HomeTests"
         ),
@@ -162,7 +159,6 @@ let package = Package(
                 "CartInterface",
                 "NetworkLib",
                 "AnalyticsLib",
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             path: "Modules/Details/DetailsTests"
         ),
@@ -172,7 +168,6 @@ let package = Package(
                 "Cart",
                 "CartInterface",
                 "AnalyticsLib",
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             path: "Modules/Cart/CartTests"
         ),
@@ -184,7 +179,6 @@ let package = Package(
                 "CartInterface",
                 "NetworkLib",
                 "AnalyticsLib",
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             path: "Modules/Checkout/CheckoutTests"
         ),
