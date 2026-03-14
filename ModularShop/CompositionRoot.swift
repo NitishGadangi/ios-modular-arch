@@ -2,6 +2,7 @@ import UIKit
 import NetworkLib
 import AnalyticsLib
 import LoggingLib
+import ConfigLib
 import SharedRouterInterface
 import SharedRouter
 import HomeInterface
@@ -19,6 +20,13 @@ final class CompositionRoot {
     private let analyticsService: AnalyticsServiceProtocol
     private let logger: LoggerProtocol
     private let cartService: CartServiceProtocol
+    private let configProvider: ConfigProviderProtocol
+
+    private(set) lazy var appConfigurator = AppConfigurator(
+        logger: logger,
+        config: configProvider,
+        analytics: analyticsService
+    )
 
     private var router: SharedRouter!
     private var homeCoordinator: HomeCoordinator!
@@ -31,6 +39,7 @@ final class CompositionRoot {
 
         // Libraries
         self.logger = ConsoleLogger(minimumLevel: .debug)
+        self.configProvider = BundledConfigProvider()
         self.networkService = MockNetworkService()
         let cache = InMemoryEventCache()
         let batcher = EventBatcher(cache: cache, batchSize: 5)

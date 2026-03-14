@@ -10,6 +10,7 @@ let package = Package(
         .library(name: "NetworkLib", targets: ["NetworkLib"]),
         .library(name: "AnalyticsLib", targets: ["AnalyticsLib"]),
         .library(name: "UIComponents", targets: ["UIComponents"]),
+        .library(name: "ConfigLib", targets: ["ConfigLib"]),
 
         // Interface modules
         .library(name: "SharedRouterInterface", targets: ["SharedRouterInterface"]),
@@ -47,6 +48,10 @@ let package = Package(
         .target(
             name: "UIComponents",
             path: "Modules/Libraries/UIComponents/Sources"
+        ),
+        .target(
+            name: "ConfigLib",
+            path: "Modules/Libraries/ConfigLib/Sources"
         ),
 
         // MARK: - Interface Modules

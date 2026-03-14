@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>api_base_url</key>
+	<string>https://api.modularshop.dev/v1</string>
+	<key>log_level</key>
+	<string>debug</string>
+	<key>analytics_enabled</key>
+	<true/>
+	<key>analytics_batch_size</key>
+	<integer>5</integer>
+	<key>analytics_flush_interval</key>
+	<real>10</real>
+	<key>max_cart_items</key>
+	<integer>50</integer>
+	<key>is_checkout_enabled</key>
+	<true/>
+	<key>show_promo_banner</key>
+	<false/>
+	<key>network_timeout_seconds</key>
+	<real>30</real>
+</dict>
+</plist>

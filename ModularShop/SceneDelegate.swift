@@ -17,6 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         navigationController.navigationBar.prefersLargeTitles = true
 
         compositionRoot = CompositionRoot(navigationController: navigationController)
+        compositionRoot.appConfigurator.performLaunchSetup()
         let rootVC = compositionRoot.assembleAndStart()
         navigationController.viewControllers = [rootVC]
 
