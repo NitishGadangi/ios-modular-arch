@@ -7,6 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E37555F2F656FE6001C939F /* AnalyticsLib in Frameworks */ = {isa = PBXBuildFile; productRef = 5E37555E2F656FE6001C939F /* AnalyticsLib */; };
+		5E3755612F656FE6001C939F /* Cart in Frameworks */ = {isa = PBXBuildFile; productRef = 5E3755602F656FE6001C939F /* Cart */; };
+		5E3755632F656FE6001C939F /* CartInterface in Frameworks */ = {isa = PBXBuildFile; productRef = 5E3755622F656FE6001C939F /* CartInterface */; };
+		5E3755652F656FE6001C939F /* Checkout in Frameworks */ = {isa = PBXBuildFile; productRef = 5E3755642F656FE6001C939F /* Checkout */; };
+		5E3755672F656FE6001C939F /* CheckoutInterface in Frameworks */ = {isa = PBXBuildFile; productRef = 5E3755662F656FE6001C939F /* CheckoutInterface */; };
+		5E3755692F656FE6001C939F /* Details in Frameworks */ = {isa = PBXBuildFile; productRef = 5E3755682F656FE6001C939F /* Details */; };
+		5E37556B2F656FE6001C939F /* DetailsInterface in Frameworks */ = {isa = PBXBuildFile; productRef = 5E37556A2F656FE6001C939F /* DetailsInterface */; };
+		5E37556D2F656FE6001C939F /* Home in Frameworks */ = {isa = PBXBuildFile; productRef = 5E37556C2F656FE6001C939F /* Home */; };
+		5E37556F2F656FE6001C939F /* HomeInterface in Frameworks */ = {isa = PBXBuildFile; productRef = 5E37556E2F656FE6001C939F /* HomeInterface */; };
+		5E3755752F657134001C939F /* HomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3755732F657134001C939F /* HomeViewModelTests.swift */; };
+		5E37557D2F6571C2001C939F /* CartViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3755772F6571C2001C939F /* CartViewModelTests.swift */; };
+		5E37557E2F6571C2001C939F /* CartServiceImplTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3755762F6571C2001C939F /* CartServiceImplTests.swift */; };
+		5E37557F2F6571C2001C939F /* CheckoutViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3755792F6571C2001C939F /* CheckoutViewModelTests.swift */; };
+		5E3755802F6571C2001C939F /* DetailsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E37557B2F6571C2001C939F /* DetailsViewModelTests.swift */; };
 		5E6DDCCF2F615E960050BD78 /* AnalyticsLib in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDCCE2F615E960050BD78 /* AnalyticsLib */; };
 		5E6DDCD12F615E960050BD78 /* Cart in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDCD02F615E960050BD78 /* Cart */; };
 		5E6DDCD32F615E960050BD78 /* Checkout in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDCD22F615E960050BD78 /* Checkout */; };
@@ -18,7 +32,23 @@
 		5E6DDCDF2F615E960050BD78 /* UIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 5E6DDCDE2F615E960050BD78 /* UIComponents */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		5E3755582F656EC9001C939F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5E6DDBAA2F614FBF0050BD78 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5E6DDBB12F614FBF0050BD78;
+			remoteInfo = ModularShop;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		5E3755542F656EC9001C939F /* ModularShopTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ModularShopTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E3755732F657134001C939F /* HomeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModelTests.swift; sourceTree = "<group>"; };
+		5E3755762F6571C2001C939F /* CartServiceImplTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartServiceImplTests.swift; sourceTree = "<group>"; };
+		5E3755772F6571C2001C939F /* CartViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartViewModelTests.swift; sourceTree = "<group>"; };
+		5E3755792F6571C2001C939F /* CheckoutViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutViewModelTests.swift; sourceTree = "<group>"; };
+		5E37557B2F6571C2001C939F /* DetailsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewModelTests.swift; sourceTree = "<group>"; };
 		5E6DDBB22F614FBF0050BD78 /* ModularShop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ModularShop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -49,6 +79,22 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5E3755512F656EC9001C939F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E3755632F656FE6001C939F /* CartInterface in Frameworks */,
+				5E37556F2F656FE6001C939F /* HomeInterface in Frameworks */,
+				5E3755672F656FE6001C939F /* CheckoutInterface in Frameworks */,
+				5E3755612F656FE6001C939F /* Cart in Frameworks */,
+				5E3755692F656FE6001C939F /* Details in Frameworks */,
+				5E3755652F656FE6001C939F /* Checkout in Frameworks */,
+				5E37556D2F656FE6001C939F /* Home in Frameworks */,
+				5E37555F2F656FE6001C939F /* AnalyticsLib in Frameworks */,
+				5E37556B2F656FE6001C939F /* DetailsInterface in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5E6DDBAF2F614FBF0050BD78 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -68,11 +114,68 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5E37555D2F656FE6001C939F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5E3755712F6570EC001C939F /* ModularShopTests */ = {
+			isa = PBXGroup;
+			children = (
+				5E3755782F6571C2001C939F /* CartTests */,
+				5E37557A2F6571C2001C939F /* CheckoutTests */,
+				5E37557C2F6571C2001C939F /* DetailsTests */,
+				5E3755742F657134001C939F /* HomeTests */,
+			);
+			path = ModularShopTests;
+			sourceTree = "<group>";
+		};
+		5E3755742F657134001C939F /* HomeTests */ = {
+			isa = PBXGroup;
+			children = (
+				5E3755732F657134001C939F /* HomeViewModelTests.swift */,
+			);
+			name = HomeTests;
+			path = Modules/Home/HomeTests;
+			sourceTree = SOURCE_ROOT;
+		};
+		5E3755782F6571C2001C939F /* CartTests */ = {
+			isa = PBXGroup;
+			children = (
+				5E3755762F6571C2001C939F /* CartServiceImplTests.swift */,
+				5E3755772F6571C2001C939F /* CartViewModelTests.swift */,
+			);
+			name = CartTests;
+			path = Modules/Cart/CartTests;
+			sourceTree = SOURCE_ROOT;
+		};
+		5E37557A2F6571C2001C939F /* CheckoutTests */ = {
+			isa = PBXGroup;
+			children = (
+				5E3755792F6571C2001C939F /* CheckoutViewModelTests.swift */,
+			);
+			name = CheckoutTests;
+			path = Modules/Checkout/CheckoutTests;
+			sourceTree = SOURCE_ROOT;
+		};
+		5E37557C2F6571C2001C939F /* DetailsTests */ = {
+			isa = PBXGroup;
+			children = (
+				5E37557B2F6571C2001C939F /* DetailsViewModelTests.swift */,
+			);
+			name = DetailsTests;
+			path = Modules/Details/DetailsTests;
+			sourceTree = SOURCE_ROOT;
+		};
 		5E6DDBA92F614FBF0050BD78 = {
 			isa = PBXGroup;
 			children = (
 				5E6DDD652F615EA60050BD78 /* Modules */,
 				5E6DDBB42F614FBF0050BD78 /* ModularShop */,
+				5E3755712F6570EC001C939F /* ModularShopTests */,
+				5E37555D2F656FE6001C939F /* Frameworks */,
 				5E6DDBB32F614FBF0050BD78 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -81,6 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				5E6DDBB22F614FBF0050BD78 /* ModularShop.app */,
+				5E3755542F656EC9001C939F /* ModularShopTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -88,6 +192,35 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5E3755532F656EC9001C939F /* ModularShopTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E37555C2F656EC9001C939F /* Build configuration list for PBXNativeTarget "ModularShopTests" */;
+			buildPhases = (
+				5E3755502F656EC9001C939F /* Sources */,
+				5E3755512F656EC9001C939F /* Frameworks */,
+				5E3755522F656EC9001C939F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5E3755592F656EC9001C939F /* PBXTargetDependency */,
+			);
+			name = ModularShopTests;
+			packageProductDependencies = (
+				5E37555E2F656FE6001C939F /* AnalyticsLib */,
+				5E3755602F656FE6001C939F /* Cart */,
+				5E3755622F656FE6001C939F /* CartInterface */,
+				5E3755642F656FE6001C939F /* Checkout */,
+				5E3755662F656FE6001C939F /* CheckoutInterface */,
+				5E3755682F656FE6001C939F /* Details */,
+				5E37556A2F656FE6001C939F /* DetailsInterface */,
+				5E37556C2F656FE6001C939F /* Home */,
+				5E37556E2F656FE6001C939F /* HomeInterface */,
+			);
+			productName = ModularShopTests;
+			productReference = 5E3755542F656EC9001C939F /* ModularShopTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		5E6DDBB12F614FBF0050BD78 /* ModularShop */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5E6DDBC52F614FC00050BD78 /* Build configuration list for PBXNativeTarget "ModularShop" */;
@@ -129,6 +262,10 @@
 				LastSwiftUpdateCheck = 2630;
 				LastUpgradeCheck = 2630;
 				TargetAttributes = {
+					5E3755532F656EC9001C939F = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 5E6DDBB12F614FBF0050BD78;
+					};
 					5E6DDBB12F614FBF0050BD78 = {
 						CreatedOnToolsVersion = 26.3;
 						LastSwiftMigration = 2630;
@@ -153,11 +290,19 @@
 			projectRoot = "";
 			targets = (
 				5E6DDBB12F614FBF0050BD78 /* ModularShop */,
+				5E3755532F656EC9001C939F /* ModularShopTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5E3755522F656EC9001C939F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5E6DDBB02F614FBF0050BD78 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -168,6 +313,18 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5E3755502F656EC9001C939F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E37557D2F6571C2001C939F /* CartViewModelTests.swift in Sources */,
+				5E37557E2F6571C2001C939F /* CartServiceImplTests.swift in Sources */,
+				5E37557F2F6571C2001C939F /* CheckoutViewModelTests.swift in Sources */,
+				5E3755802F6571C2001C939F /* DetailsViewModelTests.swift in Sources */,
+				5E3755752F657134001C939F /* HomeViewModelTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5E6DDBAE2F614FBF0050BD78 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -177,7 +334,57 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		5E3755592F656EC9001C939F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5E6DDBB12F614FBF0050BD78 /* ModularShop */;
+			targetProxy = 5E3755582F656EC9001C939F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		5E37555A2F656EC9001C939F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KUALD79QSS;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nitish.ModularShopTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ModularShop.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ModularShop";
+			};
+			name = Debug;
+		};
+		5E37555B2F656EC9001C939F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KUALD79QSS;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nitish.ModularShopTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ModularShop.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ModularShop";
+			};
+			name = Release;
+		};
 		5E6DDBC62F614FC00050BD78 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -371,6 +578,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5E37555C2F656EC9001C939F /* Build configuration list for PBXNativeTarget "ModularShopTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E37555A2F656EC9001C939F /* Debug */,
+				5E37555B2F656EC9001C939F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		5E6DDBAD2F614FBF0050BD78 /* Build configuration list for PBXProject "ModularShop" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -399,6 +615,51 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		5E37555E2F656FE6001C939F /* AnalyticsLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5E6DDCCD2F615E960050BD78 /* XCLocalSwiftPackageReference "../ios-modular-arch" */;
+			productName = AnalyticsLib;
+		};
+		5E3755602F656FE6001C939F /* Cart */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5E6DDCCD2F615E960050BD78 /* XCLocalSwiftPackageReference "../ios-modular-arch" */;
+			productName = Cart;
+		};
+		5E3755622F656FE6001C939F /* CartInterface */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5E6DDCCD2F615E960050BD78 /* XCLocalSwiftPackageReference "../ios-modular-arch" */;
+			productName = CartInterface;
+		};
+		5E3755642F656FE6001C939F /* Checkout */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5E6DDCCD2F615E960050BD78 /* XCLocalSwiftPackageReference "../ios-modular-arch" */;
+			productName = Checkout;
+		};
+		5E3755662F656FE6001C939F /* CheckoutInterface */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5E6DDCCD2F615E960050BD78 /* XCLocalSwiftPackageReference "../ios-modular-arch" */;
+			productName = CheckoutInterface;
+		};
+		5E3755682F656FE6001C939F /* Details */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5E6DDCCD2F615E960050BD78 /* XCLocalSwiftPackageReference "../ios-modular-arch" */;
+			productName = Details;
+		};
+		5E37556A2F656FE6001C939F /* DetailsInterface */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5E6DDCCD2F615E960050BD78 /* XCLocalSwiftPackageReference "../ios-modular-arch" */;
+			productName = DetailsInterface;
+		};
+		5E37556C2F656FE6001C939F /* Home */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5E6DDCCD2F615E960050BD78 /* XCLocalSwiftPackageReference "../ios-modular-arch" */;
+			productName = Home;
+		};
+		5E37556E2F656FE6001C939F /* HomeInterface */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5E6DDCCD2F615E960050BD78 /* XCLocalSwiftPackageReference "../ios-modular-arch" */;
+			productName = HomeInterface;
+		};
 		5E6DDCCE2F615E960050BD78 /* AnalyticsLib */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AnalyticsLib;
