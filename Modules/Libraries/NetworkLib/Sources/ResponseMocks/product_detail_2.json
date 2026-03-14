@@ -2,7 +2,7 @@
     "id": "2",
     "name": "Smart Watch",
     "price": 199.99,
-    "image_url": "smartwatch",
+    "image_url": "stopwatch",
     "description": "Feature-rich smartwatch with heart rate monitoring, GPS tracking, and water resistance up to 50 meters. Includes customizable watch faces and 7-day battery life.",
     "specs": [
         "Heart Rate Monitor",

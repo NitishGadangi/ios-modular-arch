@@ -77,7 +77,7 @@ final class ProductInfoView: UIView {
         priceLabel.text = String(format: "$%.2f", product.price)
         ratingLabel.text = "\(product.rating) stars (\(product.reviewCount) reviews)"
         descriptionLabel.text = product.description
-        imageView.image = UIImage(systemName: "photo")
+        imageView.image = UIImage(systemName: product.imageUrl)
 
         specsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
 

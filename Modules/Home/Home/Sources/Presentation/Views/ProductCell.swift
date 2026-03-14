@@ -54,6 +54,6 @@ final class ProductCell: UICollectionViewCell {
     func configure(with product: ProductSummary) {
         nameLabel.text = product.name
         priceLabel.text = String(format: "$%.2f", product.price)
-        imageView.image = UIImage(systemName: "photo")
+        imageView.image = UIImage(systemName: product.imageUrl)
     }
 }

@@ -10,21 +10,21 @@
         "id": "2",
         "name": "Smart Watch",
         "price": 199.99,
-        "image_url": "smartwatch",
+        "image_url": "stopwatch",
         "description": "Feature-rich smartwatch with health monitoring"
     },
     {
         "id": "3",
         "name": "Laptop Stand",
         "price": 49.99,
-        "image_url": "laptopstand",
+        "image_url": "desktopcomputer",
         "description": "Ergonomic aluminum laptop stand"
     },
     {
         "id": "4",
         "name": "USB-C Hub",
         "price": 39.99,
-        "image_url": "usbhub",
+        "image_url": "printer",
         "description": "7-in-1 USB-C hub with HDMI output"
     }
 ]
