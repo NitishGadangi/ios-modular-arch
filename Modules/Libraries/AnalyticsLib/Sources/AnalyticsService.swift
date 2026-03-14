@@ -6,6 +6,9 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     private let queue: DispatchQueue
     private let flushInterval: TimeInterval
     private var timer: DispatchSourceTimer?
+    private var _isEnabled: Bool = true
+
+    public var isEnabled: Bool { _isEnabled }
 
     public init(
         batcher: EventBatcher,
@@ -24,9 +27,15 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         timer?.cancel()
     }
 
+    public func setEnabled(_ enabled: Bool) {
+        queue.async { [weak self] in
+            self?._isEnabled = enabled
+        }
+    }
+
     public func track(_ event: AnalyticsEvent) {
         queue.async { [weak self] in
-            guard let self else { return }
+            guard let self, self._isEnabled else { return }
             self.batcher.add(event)
             if self.batcher.shouldFlush {
                 self.performFlush()
@@ -50,7 +59,8 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         let source = DispatchSource.makeTimerSource(queue: queue)
         source.schedule(deadline: .now() + flushInterval, repeating: flushInterval)
         source.setEventHandler { [weak self] in
-            self?.performFlush()
+            guard let self, self._isEnabled else { return }
+            self.performFlush()
         }
         source.resume()
         timer = source

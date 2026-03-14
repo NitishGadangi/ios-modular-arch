@@ -107,6 +107,8 @@ private final class StubCartService: CartServiceProtocol {
 }
 
 private final class StubAnalytics: AnalyticsServiceProtocol {
+    var isEnabled: Bool = true
+    func setEnabled(_ enabled: Bool) { isEnabled = enabled }
     func track(_ event: AnalyticsEvent) {}
     func flush() {}
 }

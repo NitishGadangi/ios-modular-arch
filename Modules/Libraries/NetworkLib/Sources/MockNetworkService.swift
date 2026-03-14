@@ -4,6 +4,7 @@ import Combine
 public final class MockNetworkService: NetworkServiceProtocol {
     private let bundle: Bundle
     private let decoder: JSONDecoder
+    private(set) var configuration: NetworkConfiguration?
 
     public init(bundle: Bundle? = nil) {
         self.bundle = bundle ?? .module
@@ -11,7 +12,15 @@ public final class MockNetworkService: NetworkServiceProtocol {
         self.decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
 
+    public func configure(with configuration: NetworkConfiguration) {
+        self.configuration = configuration
+    }
+
     public func request<T: Decodable>(_ endpoint: Endpoint, responseType: T.Type) -> AnyPublisher<T, NetworkError> {
+        if configuration?.logRequests == true {
+            print("[Network] \(endpoint.method.rawValue) \(configuration?.baseURL ?? "")\(endpoint.path)")
+        }
+
         let fileName = mapEndpointToFile(endpoint)
 
         guard let url = bundle.url(forResource: fileName, withExtension: "json") else {

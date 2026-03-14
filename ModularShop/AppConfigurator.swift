@@ -1,26 +1,35 @@
 import UIKit
 import LoggingLib
 import AnalyticsLib
+import NetworkLib
 import ConfigLib
 
 final class AppConfigurator {
-    private let logger: LoggerProtocol
+    private var logger: LoggerProtocol
     private let config: ConfigProviderProtocol
     private let analytics: AnalyticsServiceProtocol
+    private let networkService: NetworkServiceProtocol
 
-    init(logger: LoggerProtocol, config: ConfigProviderProtocol, analytics: AnalyticsServiceProtocol) {
+    init(
+        logger: LoggerProtocol,
+        config: ConfigProviderProtocol,
+        analytics: AnalyticsServiceProtocol,
+        networkService: NetworkServiceProtocol
+    ) {
         self.logger = logger
         self.config = config
         self.analytics = analytics
+        self.networkService = networkService
     }
 
     func performLaunchSetup() {
         let startTime = CFAbsoluteTimeGetCurrent()
 
+        setupConfig()
         setupLogging()
+        setupNetwork()
         setupAnalytics()
         setupAppearance()
-        logFeatureFlags()
 
         let durationMs = (CFAbsoluteTimeGetCurrent() - startTime) * 1000
         logger.info("App launch setup completed in \(String(format: "%.2f", durationMs))ms")
@@ -28,21 +37,42 @@ final class AppConfigurator {
 
     // MARK: - Setup Steps
 
+    private func setupConfig() {
+        logger.info("Config loaded: \(config.loadedKeyCount) keys from AppConfig.plist")
+    }
+
     private func setupLogging() {
-        let levelString = config.string(for: .logLevel)
-        var loggerCopy = logger
-        loggerCopy.minimumLevel = logLevel(from: levelString)
+        let levelString = config.string(for: .logLevel, default: "debug")
+        logger.minimumLevel = logLevel(from: levelString)
         logger.info("Logging configured: level=\(levelString)")
     }
 
+    private func setupNetwork() {
+        let baseURL = config.string(for: .apiBaseURL, default: "https://api.modularshop.dev/v1")
+        let timeout = config.double(for: .networkTimeoutSeconds, default: 30)
+
+        #if DEBUG
+        let logRequests = true
+        #else
+        let logRequests = false
+        #endif
+
+        let configuration = NetworkConfiguration(
+            baseURL: baseURL,
+            timeoutInterval: timeout,
+            logRequests: logRequests
+        )
+        networkService.configure(with: configuration)
+        logger.info("Network configured: baseURL=\(baseURL), timeout=\(timeout)s, logRequests=\(logRequests)")
+    }
+
     private func setupAnalytics() {
-        let enabled = config.bool(for: .analyticsEnabled)
+        let enabled = config.bool(for: .analyticsEnabled, default: true)
+        analytics.setEnabled(enabled)
         if enabled {
             analytics.track(AnalyticsEvent(name: "app_launched", parameters: [:]))
-            logger.info("Analytics enabled")
-        } else {
-            logger.info("Analytics disabled by config")
         }
+        logger.info("Analytics configured: enabled=\(enabled)")
     }
 
     private func setupAppearance() {
@@ -53,10 +83,6 @@ final class AppConfigurator {
         UINavigationBar.appearance().tintColor = .systemBlue
 
         logger.info("Appearance configured")
-    }
-
-    private func logFeatureFlags() {
-        logger.info("Feature flags — checkout=\(config.bool(for: .isCheckoutEnabled)), promoBanner=\(config.bool(for: .showPromoBanner)), maxCartItems=\(config.int(for: .maxCartItems))")
     }
 
     // MARK: - Helpers

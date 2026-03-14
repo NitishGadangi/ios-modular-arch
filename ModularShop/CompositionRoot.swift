@@ -25,7 +25,8 @@ final class CompositionRoot {
     private(set) lazy var appConfigurator = AppConfigurator(
         logger: logger,
         config: configProvider,
-        analytics: analyticsService
+        analytics: analyticsService,
+        networkService: networkService
     )
 
     private var router: SharedRouter!

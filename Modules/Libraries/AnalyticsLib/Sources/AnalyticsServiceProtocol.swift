@@ -1,6 +1,8 @@
 import Foundation
 
 public protocol AnalyticsServiceProtocol {
+    var isEnabled: Bool { get }
+    func setEnabled(_ enabled: Bool)
     func track(_ event: AnalyticsEvent)
     func flush()
 }
