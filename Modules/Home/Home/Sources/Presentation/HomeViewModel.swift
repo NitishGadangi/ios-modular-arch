@@ -13,26 +13,24 @@ final class HomeViewModel {
         case cartTapped
     }
 
-    struct Input {
-        let loadProducts = PassthroughSubject<Void, Never>()
-        let selectProduct = PassthroughSubject<String, Never>()
-        let tapCart = PassthroughSubject<Void, Never>()
+    enum Action {
+        case loadProducts
+        case selectProduct(id: String)
+        case tapCart
     }
 
-    struct Output {
-        let products: AnyPublisher<[ProductSummary], Never>
-        let isLoading: AnyPublisher<Bool, Never>
-        let errorMessage: AnyPublisher<String?, Never>
+    enum State {
+        case idle
+        case loading
+        case loaded(products: [ProductSummary])
+        case error(String)
     }
 
-    let input = Input()
-    let output: Output
+    let actionHandler = PassthroughSubject<Action, Never>()
+    private let stateSubject = CurrentValueSubject<State, Never>(.idle)
+    var statePublisher: AnyPublisher<State, Never> { stateSubject.eraseToAnyPublisher() }
 
     weak var navigationDelegate: HomeViewModelNavigationDelegate?
-
-    @Published private var products: [ProductSummary] = []
-    @Published private var isLoading = false
-    @Published private var errorMessage: String?
 
     private let getProductsUseCase: GetProductsUseCase
     private let analytics: AnalyticsServiceProtocol
@@ -42,44 +40,39 @@ final class HomeViewModel {
         self.getProductsUseCase = getProductsUseCase
         self.analytics = analytics
 
-        self.output = Output(
-            products: _products.projectedValue.eraseToAnyPublisher(),
-            isLoading: _isLoading.projectedValue.eraseToAnyPublisher(),
-            errorMessage: _errorMessage.projectedValue.eraseToAnyPublisher()
-        )
-
-        bindInputs()
+        bindActions()
     }
 
-    private func bindInputs() {
-        input.loadProducts
-            .sink { [weak self] in self?.loadProducts() }
+    private func bindActions() {
+        actionHandler
+            .sink { [weak self] action in self?.handleAction(action) }
             .store(in: &cancellables)
+    }
 
-        input.selectProduct
-            .sink { [weak self] id in self?.didSelectProduct(id: id) }
-            .store(in: &cancellables)
-
-        input.tapCart
-            .sink { [weak self] in self?.didTapCart() }
-            .store(in: &cancellables)
+    private func handleAction(_ action: Action) {
+        switch action {
+        case .loadProducts:
+            loadProducts()
+        case .selectProduct(let id):
+            didSelectProduct(id: id)
+        case .tapCart:
+            didTapCart()
+        }
     }
 
     private func loadProducts() {
-        isLoading = true
-        errorMessage = nil
+        stateSubject.send(.loading)
 
         getProductsUseCase.execute()
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
-                    self?.isLoading = false
                     if case .failure(let error) = completion {
-                        self?.errorMessage = error.localizedDescription
+                        self?.stateSubject.send(.error(error.localizedDescription))
                     }
                 },
                 receiveValue: { [weak self] products in
-                    self?.products = products
+                    self?.stateSubject.send(.loaded(products: products))
                     self?.analytics.track(AnalyticsEvent(
                         name: "products_loaded",
                         parameters: ["count": "\(products.count)"]

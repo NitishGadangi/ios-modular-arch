@@ -61,8 +61,8 @@ final class DetailsViewController: BaseViewController {
         title = "Product Details"
         setupUI()
         setupNavBar()
-        bindOutput()
-        viewModel.input.loadProduct.send()
+        bindState()
+        viewModel.actionHandler.send(.loadProduct)
     }
 
     private func setupNavBar() {
@@ -91,51 +91,45 @@ final class DetailsViewController: BaseViewController {
         contentStack.addArrangedSubview(buttonStack)
     }
 
-    private func bindOutput() {
-        viewModel.output.product
-            .compactMap { $0 }
+    private func bindState() {
+        viewModel.statePublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] product in
-                self?.productInfoView.configure(with: product)
-                self?.title = product.name
-            }
+            .sink { [weak self] state in self?.render(state) }
             .store(in: &cancellables)
+    }
 
-        viewModel.output.isLoading
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] loading in
-                self?.showLoading(loading)
-            }
-            .store(in: &cancellables)
-
-        viewModel.output.addedToCart
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] added in
-                self?.addToCartButton.setTitle(added ? "Added!" : "Add to Cart", for: .normal)
-                self?.addToCartButton.backgroundColor = added ? UIColor.Theme.success : UIColor.Theme.primary
-            }
-            .store(in: &cancellables)
-
-        viewModel.output.errorMessage
-            .compactMap { $0 }
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] message in
-                let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                self?.present(alert, animated: true)
-            }
-            .store(in: &cancellables)
+    private func render(_ state: DetailsViewModel.State) {
+        switch state {
+        case .idle:
+            break
+        case .loading:
+            showLoading(true)
+        case .loaded(let product):
+            showLoading(false)
+            productInfoView.configure(with: product)
+            title = product.name
+            addToCartButton.setTitle("Add to Cart", for: .normal)
+            addToCartButton.backgroundColor = UIColor.Theme.primary
+        case .addedToCart:
+            addToCartButton.setTitle("Added!", for: .normal)
+            addToCartButton.backgroundColor = UIColor.Theme.success
+        case .error(let message):
+            showLoading(false)
+            let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+        }
     }
 
     @objc private func addToCartTapped() {
-        viewModel.input.addToCart.send()
+        viewModel.actionHandler.send(.addToCart)
     }
 
     @objc private func buyNowTapped() {
-        viewModel.input.buyNow.send()
+        viewModel.actionHandler.send(.buyNow)
     }
 
     @objc private func cartTapped() {
-        viewModel.input.tapCart.send()
+        viewModel.actionHandler.send(.tapCart)
     }
 }

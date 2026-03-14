@@ -76,7 +76,7 @@ final class CartViewController: BaseViewController {
         super.viewDidLoad()
         title = "Cart"
         setupUI()
-        bindOutput()
+        bindState()
     }
 
     private func setupUI() {
@@ -96,29 +96,30 @@ final class CartViewController: BaseViewController {
         ])
     }
 
-    private func bindOutput() {
-        viewModel.output.cartItems
+    private func bindState() {
+        viewModel.statePublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] items in
-                self?.cartItems = items
-                self?.tableView.reloadData()
-                self?.emptyLabel.isHidden = !items.isEmpty
-                self?.footerView.isHidden = items.isEmpty
-            }
-            .store(in: &cancellables)
-
-        viewModel.output.totalPrice
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] total in
-                if let totalLabel = self?.footerView.viewWithTag(100) as? UILabel {
-                    totalLabel.text = String(format: "Total: $%.2f", total)
-                }
-            }
+            .sink { [weak self] state in self?.render(state) }
             .store(in: &cancellables)
     }
 
+    private func render(_ state: CartViewModel.State) {
+        switch state {
+        case .idle:
+            break
+        case .updated(let items, let totalPrice):
+            cartItems = items
+            tableView.reloadData()
+            emptyLabel.isHidden = !items.isEmpty
+            footerView.isHidden = items.isEmpty
+            if let totalLabel = footerView.viewWithTag(100) as? UILabel {
+                totalLabel.text = String(format: "Total: $%.2f", totalPrice)
+            }
+        }
+    }
+
     @objc private func checkoutTapped() {
-        viewModel.input.tapCheckout.send()
+        viewModel.actionHandler.send(.tapCheckout)
     }
 }
 
@@ -134,7 +135,7 @@ extension CartViewController: UITableViewDataSource {
         let item = cartItems[indexPath.row]
         cell.configure(with: item)
         cell.onQuantityChanged = { [weak self] quantity in
-            self?.viewModel.input.updateQuantity.send((productId: item.productId, quantity: quantity))
+            self?.viewModel.actionHandler.send(.updateQuantity(productId: item.productId, quantity: quantity))
         }
         return cell
     }
@@ -144,13 +145,13 @@ extension CartViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let item = cartItems[indexPath.row]
-        viewModel.input.selectItem.send(item.productId)
+        viewModel.actionHandler.send(.selectItem(productId: item.productId))
     }
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let item = cartItems[indexPath.row]
-            viewModel.input.removeItem.send(item.productId)
+            viewModel.actionHandler.send(.removeItem(productId: item.productId))
         }
     }
 }

@@ -7,7 +7,7 @@ public final class ConsoleAnalyticsDispatcher: AnalyticsDispatcherProtocol {
         print("[Analytics] Dispatching \(events.count) events:")
         for event in events {
             let params = event.parameters.map { "\($0.key)=\($0.value)" }.joined(separator: ", ")
-            print("  - \(event.name) [\(params)]")
+            print("  - \(event.name) [\(params)] at \(event.timestamp)")
         }
     }
 }

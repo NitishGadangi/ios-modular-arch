@@ -96,7 +96,7 @@ final class CheckoutViewController: BaseViewController {
         super.viewDidLoad()
         title = "Checkout"
         setupUI()
-        bindOutput()
+        bindState()
     }
 
     private func setupUI() {
@@ -111,46 +111,39 @@ final class CheckoutViewController: BaseViewController {
         contentStack.addArrangedSubview(orderConfirmedStack)
     }
 
-    private func bindOutput() {
-        viewModel.output.cartItems
+    private func bindState() {
+        viewModel.statePublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] items in
-                self?.updateItemsList(items)
-            }
+            .sink { [weak self] state in self?.render(state) }
             .store(in: &cancellables)
+    }
 
-        viewModel.output.totalPrice
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] total in
-                self?.totalLabel.text = String(format: "Total: $%.2f", total)
-            }
-            .store(in: &cancellables)
-
-        viewModel.output.isLoading
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] loading in
-                self?.showLoading(loading)
-                self?.placeOrderButton.isEnabled = !loading
-            }
-            .store(in: &cancellables)
-
-        viewModel.output.orderSummary
-            .compactMap { $0 }
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] summary in
-                self?.showOrderConfirmation(summary)
-            }
-            .store(in: &cancellables)
-
-        viewModel.output.errorMessage
-            .compactMap { $0 }
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] message in
-                let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                self?.present(alert, animated: true)
-            }
-            .store(in: &cancellables)
+    private func render(_ state: CheckoutViewModel.State) {
+        switch state {
+        case .idle:
+            break
+        case .cartLoaded(let items, let totalPrice):
+            updateItemsList(items)
+            totalLabel.text = String(format: "Total: $%.2f", totalPrice)
+            showLoading(false)
+            placeOrderButton.isEnabled = true
+        case .placingOrder(let items, let totalPrice):
+            updateItemsList(items)
+            totalLabel.text = String(format: "Total: $%.2f", totalPrice)
+            showLoading(true)
+            placeOrderButton.isEnabled = false
+        case .orderPlaced(let summary):
+            showLoading(false)
+            showOrderConfirmation(summary)
+        case .error(let message, let items, let totalPrice):
+            updateItemsList(items)
+            totalLabel.text = String(format: "Total: $%.2f", totalPrice)
+            showLoading(false)
+            placeOrderButton.isEnabled = true
+            let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+        }
     }
 
     private func updateItemsList(_ items: [CartItem]) {
@@ -172,10 +165,10 @@ final class CheckoutViewController: BaseViewController {
     }
 
     @objc private func placeOrderTapped() {
-        viewModel.input.placeOrder.send()
+        viewModel.actionHandler.send(.placeOrder)
     }
 
     @objc private func goHomeTapped() {
-        viewModel.input.goHome.send()
+        viewModel.actionHandler.send(.goHome)
     }
 }

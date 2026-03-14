@@ -13,29 +13,27 @@ final class CheckoutViewModel {
         case orderCompleted
     }
 
-    struct Input {
-        let placeOrder = PassthroughSubject<Void, Never>()
-        let goHome = PassthroughSubject<Void, Never>()
+    enum Action {
+        case placeOrder
+        case goHome
     }
 
-    struct Output {
-        let cartItems: AnyPublisher<[CartItem], Never>
-        let totalPrice: AnyPublisher<Double, Never>
-        let isLoading: AnyPublisher<Bool, Never>
-        let orderSummary: AnyPublisher<OrderSummary?, Never>
-        let errorMessage: AnyPublisher<String?, Never>
+    enum State {
+        case idle
+        case cartLoaded(items: [CartItem], totalPrice: Double)
+        case placingOrder(items: [CartItem], totalPrice: Double)
+        case orderPlaced(OrderSummary)
+        case error(String, items: [CartItem], totalPrice: Double)
     }
 
-    let input = Input()
-    let output: Output
+    let actionHandler = PassthroughSubject<Action, Never>()
+    private let stateSubject = CurrentValueSubject<State, Never>(.idle)
+    var statePublisher: AnyPublisher<State, Never> { stateSubject.eraseToAnyPublisher() }
 
     weak var navigationDelegate: CheckoutViewModelNavigationDelegate?
 
-    @Published private var cartItems: [CartItem] = []
-    @Published private var totalPrice: Double = 0
-    @Published private var isLoading = false
-    @Published private var orderSummary: OrderSummary?
-    @Published private var errorMessage: String?
+    private var cartItems: [CartItem] = []
+    private var totalPrice: Double = 0
 
     private let placeOrderUseCase: PlaceOrderUseCase
     private let cartService: CartServiceProtocol
@@ -51,53 +49,51 @@ final class CheckoutViewModel {
         self.cartService = cartService
         self.analytics = analytics
 
-        self.output = Output(
-            cartItems: _cartItems.projectedValue.eraseToAnyPublisher(),
-            totalPrice: _totalPrice.projectedValue.eraseToAnyPublisher(),
-            isLoading: _isLoading.projectedValue.eraseToAnyPublisher(),
-            orderSummary: _orderSummary.projectedValue.eraseToAnyPublisher(),
-            errorMessage: _errorMessage.projectedValue.eraseToAnyPublisher()
-        )
-
         bindCartService()
-        bindInputs()
+        bindActions()
     }
 
     private func bindCartService() {
         cartService.items
             .receive(on: DispatchQueue.main)
             .sink { [weak self] items in
-                self?.cartItems = items
-                self?.totalPrice = items.reduce(0) { $0 + $1.price * Double($1.quantity) }
+                guard let self else { return }
+                self.cartItems = items
+                self.totalPrice = items.reduce(0) { $0 + $1.price * Double($1.quantity) }
+                self.stateSubject.send(.cartLoaded(items: items, totalPrice: self.totalPrice))
             }
             .store(in: &cancellables)
     }
 
-    private func bindInputs() {
-        input.placeOrder
-            .sink { [weak self] in self?.placeOrder() }
-            .store(in: &cancellables)
-
-        input.goHome
-            .sink { [weak self] in self?.goHome() }
+    private func bindActions() {
+        actionHandler
+            .sink { [weak self] action in self?.handleAction(action) }
             .store(in: &cancellables)
     }
 
+    private func handleAction(_ action: Action) {
+        switch action {
+        case .placeOrder:
+            placeOrder()
+        case .goHome:
+            goHome()
+        }
+    }
+
     private func placeOrder() {
-        isLoading = true
-        errorMessage = nil
+        stateSubject.send(.placingOrder(items: cartItems, totalPrice: totalPrice))
 
         placeOrderUseCase.execute(total: totalPrice)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
-                    self?.isLoading = false
+                    guard let self else { return }
                     if case .failure(let error) = completion {
-                        self?.errorMessage = error.localizedDescription
+                        self.stateSubject.send(.error(error.localizedDescription, items: self.cartItems, totalPrice: self.totalPrice))
                     }
                 },
                 receiveValue: { [weak self] summary in
-                    self?.orderSummary = summary
+                    self?.stateSubject.send(.orderPlaced(summary))
                     self?.cartService.clearCart()
                     self?.analytics.track(AnalyticsEvent(
                         name: "order_placed",

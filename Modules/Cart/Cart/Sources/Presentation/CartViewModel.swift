@@ -13,25 +13,26 @@ final class CartViewModel {
         case checkoutTapped
     }
 
-    struct Input {
-        let selectItem = PassthroughSubject<String, Never>()
-        let tapCheckout = PassthroughSubject<Void, Never>()
-        let removeItem = PassthroughSubject<String, Never>()
-        let updateQuantity = PassthroughSubject<(productId: String, quantity: Int), Never>()
+    enum Action {
+        case selectItem(productId: String)
+        case tapCheckout
+        case removeItem(productId: String)
+        case updateQuantity(productId: String, quantity: Int)
     }
 
-    struct Output {
-        let cartItems: AnyPublisher<[CartItem], Never>
-        let totalPrice: AnyPublisher<Double, Never>
+    enum State {
+        case idle
+        case updated(items: [CartItem], totalPrice: Double)
     }
 
-    let input = Input()
-    let output: Output
+    let actionHandler = PassthroughSubject<Action, Never>()
+    private let stateSubject = CurrentValueSubject<State, Never>(.idle)
+    var statePublisher: AnyPublisher<State, Never> { stateSubject.eraseToAnyPublisher() }
 
     weak var navigationDelegate: CartViewModelNavigationDelegate?
 
-    @Published private var cartItems: [CartItem] = []
-    @Published private var totalPrice: Double = 0
+    private var cartItems: [CartItem] = []
+    private var totalPrice: Double = 0
 
     private let cartService: CartServiceProtocol
     private let analytics: AnalyticsServiceProtocol
@@ -41,54 +42,43 @@ final class CartViewModel {
         self.cartService = cartService
         self.analytics = analytics
 
-        self.output = Output(
-            cartItems: _cartItems.projectedValue.eraseToAnyPublisher(),
-            totalPrice: _totalPrice.projectedValue.eraseToAnyPublisher()
-        )
-
         bindCartService()
-        bindInputs()
+        bindActions()
     }
 
     private func bindCartService() {
         cartService.items
             .receive(on: DispatchQueue.main)
             .sink { [weak self] items in
-                self?.cartItems = items
-                self?.totalPrice = items.reduce(0) { $0 + $1.price * Double($1.quantity) }
+                guard let self else { return }
+                self.cartItems = items
+                self.totalPrice = items.reduce(0) { $0 + $1.price * Double($1.quantity) }
+                self.stateSubject.send(.updated(items: items, totalPrice: self.totalPrice))
             }
             .store(in: &cancellables)
     }
 
-    private func bindInputs() {
-        input.selectItem
-            .sink { [weak self] productId in
-                self?.navigationDelegate?.cartViewModel(self!, didRequest: .productSelected(id: productId))
-            }
+    private func bindActions() {
+        actionHandler
+            .sink { [weak self] action in self?.handleAction(action) }
             .store(in: &cancellables)
+    }
 
-        input.tapCheckout
-            .sink { [weak self] in
-                guard let self else { return }
-                self.analytics.track(AnalyticsEvent(name: "checkout_started", parameters: [
-                    "item_count": "\(self.cartItems.count)",
-                    "total": "\(self.totalPrice)"
-                ]))
-                self.navigationDelegate?.cartViewModel(self, didRequest: .checkoutTapped)
-            }
-            .store(in: &cancellables)
-
-        input.removeItem
-            .sink { [weak self] productId in
-                self?.cartService.removeItem(productId: productId)
-                self?.analytics.track(AnalyticsEvent(name: "cart_item_removed", parameters: ["product_id": productId]))
-            }
-            .store(in: &cancellables)
-
-        input.updateQuantity
-            .sink { [weak self] productId, quantity in
-                self?.cartService.updateQuantity(productId: productId, quantity: quantity)
-            }
-            .store(in: &cancellables)
+    private func handleAction(_ action: Action) {
+        switch action {
+        case .selectItem(let productId):
+            navigationDelegate?.cartViewModel(self, didRequest: .productSelected(id: productId))
+        case .tapCheckout:
+            analytics.track(AnalyticsEvent(name: "checkout_started", parameters: [
+                "item_count": "\(cartItems.count)",
+                "total": "\(totalPrice)"
+            ]))
+            navigationDelegate?.cartViewModel(self, didRequest: .checkoutTapped)
+        case .removeItem(let productId):
+            cartService.removeItem(productId: productId)
+            analytics.track(AnalyticsEvent(name: "cart_item_removed", parameters: ["product_id": productId]))
+        case .updateQuantity(let productId, let quantity):
+            cartService.updateQuantity(productId: productId, quantity: quantity)
+        }
     }
 }

@@ -14,29 +14,28 @@ final class DetailsViewModel {
         case cartTapped
     }
 
-    struct Input {
-        let loadProduct = PassthroughSubject<Void, Never>()
-        let addToCart = PassthroughSubject<Void, Never>()
-        let buyNow = PassthroughSubject<Void, Never>()
-        let tapCart = PassthroughSubject<Void, Never>()
+    enum Action {
+        case loadProduct
+        case addToCart
+        case buyNow
+        case tapCart
     }
 
-    struct Output {
-        let product: AnyPublisher<ProductDetail?, Never>
-        let isLoading: AnyPublisher<Bool, Never>
-        let errorMessage: AnyPublisher<String?, Never>
-        let addedToCart: AnyPublisher<Bool, Never>
+    enum State {
+        case idle
+        case loading
+        case loaded(ProductDetail)
+        case addedToCart(product: ProductDetail)
+        case error(String)
     }
 
-    let input = Input()
-    let output: Output
+    let actionHandler = PassthroughSubject<Action, Never>()
+    private let stateSubject = CurrentValueSubject<State, Never>(.idle)
+    var statePublisher: AnyPublisher<State, Never> { stateSubject.eraseToAnyPublisher() }
 
     weak var navigationDelegate: DetailsViewModelNavigationDelegate?
 
-    @Published private var product: ProductDetail?
-    @Published private var isLoading = false
-    @Published private var errorMessage: String?
-    @Published private var addedToCart = false
+    private var currentProduct: ProductDetail?
 
     private let productId: String
     private let getProductDetailUseCase: GetProductDetailUseCase
@@ -55,49 +54,42 @@ final class DetailsViewModel {
         self.cartService = cartService
         self.analytics = analytics
 
-        self.output = Output(
-            product: _product.projectedValue.eraseToAnyPublisher(),
-            isLoading: _isLoading.projectedValue.eraseToAnyPublisher(),
-            errorMessage: _errorMessage.projectedValue.eraseToAnyPublisher(),
-            addedToCart: _addedToCart.projectedValue.eraseToAnyPublisher()
-        )
-
-        bindInputs()
+        bindActions()
     }
 
-    private func bindInputs() {
-        input.loadProduct
-            .sink { [weak self] in self?.loadProduct() }
+    private func bindActions() {
+        actionHandler
+            .sink { [weak self] action in self?.handleAction(action) }
             .store(in: &cancellables)
+    }
 
-        input.addToCart
-            .sink { [weak self] in self?.addToCart() }
-            .store(in: &cancellables)
-
-        input.buyNow
-            .sink { [weak self] in self?.buyNow() }
-            .store(in: &cancellables)
-
-        input.tapCart
-            .sink { [weak self] in self?.didTapCart() }
-            .store(in: &cancellables)
+    private func handleAction(_ action: Action) {
+        switch action {
+        case .loadProduct:
+            loadProduct()
+        case .addToCart:
+            addToCart()
+        case .buyNow:
+            buyNow()
+        case .tapCart:
+            didTapCart()
+        }
     }
 
     private func loadProduct() {
-        isLoading = true
-        errorMessage = nil
+        stateSubject.send(.loading)
 
         getProductDetailUseCase.execute(productId: productId)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
-                    self?.isLoading = false
                     if case .failure(let error) = completion {
-                        self?.errorMessage = error.localizedDescription
+                        self?.stateSubject.send(.error(error.localizedDescription))
                     }
                 },
                 receiveValue: { [weak self] detail in
-                    self?.product = detail
+                    self?.currentProduct = detail
+                    self?.stateSubject.send(.loaded(detail))
                     self?.analytics.track(AnalyticsEvent(
                         name: "product_viewed",
                         parameters: ["product_id": detail.id, "product_name": detail.name]
@@ -108,7 +100,7 @@ final class DetailsViewModel {
     }
 
     private func addToCart() {
-        guard let product = product else { return }
+        guard let product = currentProduct else { return }
         let item = CartItem(
             productId: product.id,
             name: product.name,
@@ -116,14 +108,15 @@ final class DetailsViewModel {
             quantity: 1
         )
         cartService.addItem(item)
-        addedToCart = true
+        stateSubject.send(.addedToCart(product: product))
         analytics.track(AnalyticsEvent(name: "add_to_cart", parameters: [
             "product_id": product.id,
             "price": "\(product.price)"
         ]))
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            self?.addedToCart = false
+            guard let self, let product = self.currentProduct else { return }
+            self.stateSubject.send(.loaded(product))
         }
     }
 

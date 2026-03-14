@@ -36,8 +36,8 @@ final class HomeViewController: BaseViewController {
         title = "ModularShop"
         setupUI()
         setupNavBar()
-        bindOutput()
-        viewModel.input.loadProducts.send()
+        bindState()
+        viewModel.actionHandler.send(.loadProducts)
     }
 
     private func setupUI() {
@@ -54,35 +54,33 @@ final class HomeViewController: BaseViewController {
         )
     }
 
-    private func bindOutput() {
-        viewModel.output.products
+    private func bindState() {
+        viewModel.statePublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] products in
-                self?.products = products
-                self?.collectionView.reloadData()
-            }
-            .store(in: &cancellables)
-
-        viewModel.output.isLoading
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] loading in
-                self?.showLoading(loading)
-            }
-            .store(in: &cancellables)
-
-        viewModel.output.errorMessage
-            .compactMap { $0 }
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] message in
-                let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                self?.present(alert, animated: true)
-            }
+            .sink { [weak self] state in self?.render(state) }
             .store(in: &cancellables)
     }
 
+    private func render(_ state: HomeViewModel.State) {
+        switch state {
+        case .idle:
+            break
+        case .loading:
+            showLoading(true)
+        case .loaded(let products):
+            showLoading(false)
+            self.products = products
+            collectionView.reloadData()
+        case .error(let message):
+            showLoading(false)
+            let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+        }
+    }
+
     @objc private func cartTapped() {
-        viewModel.input.tapCart.send()
+        viewModel.actionHandler.send(.tapCart)
     }
 }
 
@@ -103,7 +101,7 @@ extension HomeViewController: UICollectionViewDataSource {
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let product = products[indexPath.item]
-        viewModel.input.selectProduct.send(product.id)
+        viewModel.actionHandler.send(.selectProduct(id: product.id))
     }
 }
 

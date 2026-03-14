@@ -22,12 +22,14 @@ final class DetailsViewModelTests: XCTestCase {
         let sut = makeSUT()
 
         let expectation = expectation(description: "Product loaded")
-        sut.output.product.compactMap { $0 }.sink { product in
-            XCTAssertEqual(product.name, "Test")
-            expectation.fulfill()
+        sut.statePublisher.sink { state in
+            if case .loaded(let product) = state {
+                XCTAssertEqual(product.name, "Test")
+                expectation.fulfill()
+            }
         }.store(in: &cancellables)
 
-        sut.input.loadProduct.send()
+        sut.actionHandler.send(.loadProduct)
         waitForExpectations(timeout: 2)
     }
 
@@ -37,11 +39,13 @@ final class DetailsViewModelTests: XCTestCase {
         sut.navigationDelegate = spy
 
         let loadExp = expectation(description: "loaded")
-        sut.output.product.compactMap { $0 }.sink { _ in loadExp.fulfill() }.store(in: &cancellables)
-        sut.input.loadProduct.send()
+        sut.statePublisher.sink { state in
+            if case .loaded = state { loadExp.fulfill() }
+        }.store(in: &cancellables)
+        sut.actionHandler.send(.loadProduct)
         waitForExpectations(timeout: 2)
 
-        sut.input.buyNow.send()
+        sut.actionHandler.send(.buyNow)
 
         XCTAssertEqual(spy.receivedEvents.count, 1)
         if case .buyNow = spy.receivedEvents.first {} else {
@@ -54,7 +58,7 @@ final class DetailsViewModelTests: XCTestCase {
         let spy = SpyNavDelegate()
         sut.navigationDelegate = spy
 
-        sut.input.tapCart.send()
+        sut.actionHandler.send(.tapCart)
 
         if case .cartTapped = spy.receivedEvents.first {} else {
             XCTFail("Expected cartTapped event")

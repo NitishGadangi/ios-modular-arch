@@ -27,7 +27,7 @@ final class CartViewModelTests: XCTestCase {
         let spy = SpyNavDelegate()
         sut.navigationDelegate = spy
 
-        sut.input.selectItem.send("1")
+        sut.actionHandler.send(.selectItem(productId: "1"))
 
         if case .productSelected(let id) = spy.receivedEvents.first {
             XCTAssertEqual(id, "1")
@@ -40,7 +40,7 @@ final class CartViewModelTests: XCTestCase {
         let spy = SpyNavDelegate()
         sut.navigationDelegate = spy
 
-        sut.input.tapCheckout.send()
+        sut.actionHandler.send(.tapCheckout)
 
         if case .checkoutTapped = spy.receivedEvents.first {} else {
             XCTFail("Expected checkoutTapped event")
@@ -48,12 +48,12 @@ final class CartViewModelTests: XCTestCase {
     }
 
     func testCheckoutTracksAnalytics() {
-        sut.input.tapCheckout.send()
+        sut.actionHandler.send(.tapCheckout)
         XCTAssertTrue(mockAnalytics.trackedEvents.contains(where: { $0.name == "checkout_started" }))
     }
 
     func testRemoveTracksAnalytics() {
-        sut.input.removeItem.send("1")
+        sut.actionHandler.send(.removeItem(productId: "1"))
         XCTAssertTrue(mockAnalytics.trackedEvents.contains(where: { $0.name == "cart_item_removed" }))
     }
 }
