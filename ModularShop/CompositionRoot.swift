@@ -35,12 +35,14 @@ final class CompositionRoot {
     private var cartCoordinator: CartCoordinator!
     private var checkoutCoordinator: CheckoutCoordinator!
 
+    private let remoteConfigsUrl =  URL(string: "https://gist.githubusercontent.com/NitishGadangi/2eeab01e7dd1c9941deb64d062b4a94e/raw/3f11bcaebc919963a5bbc2c655ab6976a0e79ad1/modularshop_remote_config.json")!
+
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
 
         // Libraries
         self.logger = ConsoleLogger(minimumLevel: .debug)
-        self.configProvider = BundledConfigProvider()
+        self.configProvider = RemoteConfigProvider(remoteURL: remoteConfigsUrl)
         self.networkService = URLSessionNetworkService()
         let cache = InMemoryEventCache()
         let batcher = EventBatcher(cache: cache, batchSize: 5)

@@ -38,7 +38,8 @@ final class AppConfigurator {
     // MARK: - Setup Steps
 
     private func setupConfig() {
-        logger.info("Config loaded: \(config.loadedKeyCount) keys from AppConfig.plist")
+        config.loadConfig()
+        logger.info("Config loaded: \(config.loadedKeyCount) keys, remote fetch triggered")
     }
 
     private func setupLogging() {
