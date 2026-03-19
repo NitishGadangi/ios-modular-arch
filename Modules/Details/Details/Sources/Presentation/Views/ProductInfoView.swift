@@ -1,21 +1,33 @@
 import UIKit
 import DetailsInterface
 import UIComponents
+import CacheLib
 
 final class ProductInfoView: UIView {
-    private let imageView: UIImageView = {
-        let iv = UIImageView()
-        iv.contentMode = .scaleAspectFill
+    private let remoteImageView: RemoteImageView = {
+        let iv = RemoteImageView()
+        iv.contentMode = .scaleAspectFit
         iv.clipsToBounds = true
-        iv.backgroundColor = UIColor.Theme.secondaryBackground
+        iv.backgroundColor = .white
         return iv
     }()
 
-    private let nameLabel: UILabel = {
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 22, weight: .bold)
         label.textColor = UIColor.Theme.text
         label.numberOfLines = 0
+        return label
+    }()
+
+    private let categoryLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 13, weight: .medium)
+        label.textColor = .white
+        label.backgroundColor = UIColor.Theme.primary.withAlphaComponent(0.8)
+        label.layer.cornerRadius = 4
+        label.clipsToBounds = true
+        label.textAlignment = .center
         return label
     }()
 
@@ -41,13 +53,6 @@ final class ProductInfoView: UIView {
         return label
     }()
 
-    private let specsStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = 4
-        return stack
-    }()
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -59,39 +64,29 @@ final class ProductInfoView: UIView {
 
     private func setupUI() {
         let mainStack = UIStackView(arrangedSubviews: [
-            imageView, nameLabel, priceLabel, ratingLabel, descriptionLabel, specsStack
+            remoteImageView, categoryLabel, titleLabel, priceLabel, ratingLabel, descriptionLabel
         ])
         mainStack.axis = .vertical
         mainStack.spacing = 12
-        mainStack.alignment = .fill
+        mainStack.alignment = .leading
 
         addSubview(mainStack)
         mainStack.pinToEdges(of: self)
 
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.heightAnchor.constraint(equalToConstant: 250).isActive = true
+        remoteImageView.translatesAutoresizingMaskIntoConstraints = false
+        remoteImageView.heightAnchor.constraint(equalToConstant: 300).isActive = true
+        remoteImageView.widthAnchor.constraint(equalTo: mainStack.widthAnchor).isActive = true
+
+        categoryLabel.translatesAutoresizingMaskIntoConstraints = false
+        categoryLabel.heightAnchor.constraint(equalToConstant: 24).isActive = true
     }
 
     func configure(with product: ProductDetail) {
-        nameLabel.text = product.name
+        titleLabel.text = product.title
         priceLabel.text = String(format: "$%.2f", product.price)
-        ratingLabel.text = "\(product.rating) stars (\(product.reviewCount) reviews)"
+        ratingLabel.text = "\u{2605} \(product.rating.rate) (\(product.rating.count) reviews)"
         descriptionLabel.text = product.description
-        imageView.image = UIImage(systemName: product.imageUrl)
-
-        specsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-
-        let specsTitle = UILabel()
-        specsTitle.text = "Specifications"
-        specsTitle.font = .systemFont(ofSize: 16, weight: .semibold)
-        specsStack.addArrangedSubview(specsTitle)
-
-        for spec in product.specs {
-            let specLabel = UILabel()
-            specLabel.text = "  - \(spec)"
-            specLabel.font = .systemFont(ofSize: 14)
-            specLabel.textColor = UIColor.Theme.secondaryText
-            specsStack.addArrangedSubview(specLabel)
-        }
+        categoryLabel.text = "  \(product.category.capitalized)  "
+        remoteImageView.loadImage(from: product.image)
     }
 }

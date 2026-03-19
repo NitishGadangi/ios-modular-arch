@@ -41,7 +41,7 @@ final class CompositionRoot {
         // Libraries
         self.logger = ConsoleLogger(minimumLevel: .debug)
         self.configProvider = BundledConfigProvider()
-        self.networkService = MockNetworkService()
+        self.networkService = URLSessionNetworkService()
         let cache = InMemoryEventCache()
         let batcher = EventBatcher(cache: cache, batchSize: 5)
         let dispatcher = ConsoleAnalyticsDispatcher()
@@ -52,11 +52,6 @@ final class CompositionRoot {
     }
 
     func assembleAndStart() -> UIViewController {
-        // Create coordinators (builders) — they need router, but router needs them.
-        // Break the cycle: create coordinators first with a temporary reference,
-        // then create router, then inject router.
-        // We use a two-phase init approach via lazy router injection.
-
         homeCoordinator = HomeCoordinator(
             router: LazyRouter { [weak self] in self?.router },
             networkService: networkService,
@@ -78,7 +73,6 @@ final class CompositionRoot {
 
         checkoutCoordinator = CheckoutCoordinator(
             router: LazyRouter { [weak self] in self?.router },
-            networkService: networkService,
             cartService: cartService,
             analytics: analyticsService
         )

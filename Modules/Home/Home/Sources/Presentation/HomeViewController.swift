@@ -41,6 +41,7 @@ final class HomeViewController: BaseViewController {
     }
 
     private func setupUI() {
+        view.backgroundColor = UIColor.Theme.secondaryBackground
         view.addSubview(collectionView)
         collectionView.pinToSafeArea(of: view)
     }
@@ -101,7 +102,7 @@ extension HomeViewController: UICollectionViewDataSource {
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let product = products[indexPath.item]
-        viewModel.actionHandler.send(.selectProduct(id: product.id))
+        viewModel.selectProduct(product)
     }
 }
 
@@ -109,6 +110,6 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let padding: CGFloat = 16 * 2 + 12
         let width = (collectionView.bounds.width - padding) / 2
-        return CGSize(width: width, height: width + 50)
+        return CGSize(width: width, height: width + 100)
     }
 }

@@ -1,23 +1,31 @@
 import Foundation
 
-public struct ProductDetail: Equatable, Decodable {
-    public let id: String
-    public let name: String
+public struct ProductDetail: Equatable, Decodable, Identifiable {
+    public let id: Int
+    public let title: String
     public let price: Double
-    public let imageUrl: String
     public let description: String
-    public let specs: [String]
-    public let rating: Double
-    public let reviewCount: Int
+    public let category: String
+    public let image: String
+    public let rating: Rating
 
-    public init(id: String, name: String, price: Double, imageUrl: String, description: String, specs: [String], rating: Double, reviewCount: Int) {
+    public struct Rating: Equatable, Decodable {
+        public let rate: Double
+        public let count: Int
+
+        public init(rate: Double, count: Int) {
+            self.rate = rate
+            self.count = count
+        }
+    }
+
+    public init(id: Int, title: String, price: Double, description: String, category: String, image: String, rating: Rating) {
         self.id = id
-        self.name = name
+        self.title = title
         self.price = price
-        self.imageUrl = imageUrl
         self.description = description
-        self.specs = specs
+        self.category = category
+        self.image = image
         self.rating = rating
-        self.reviewCount = reviewCount
     }
 }

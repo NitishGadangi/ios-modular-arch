@@ -1,14 +1,25 @@
 import UIKit
 import CartInterface
 import UIComponents
+import CacheLib
 
 final class CartItemCell: UITableViewCell {
     static let reuseIdentifier = "CartItemCell"
+
+    private let thumbnailView: RemoteImageView = {
+        let iv = RemoteImageView()
+        iv.contentMode = .scaleAspectFit
+        iv.clipsToBounds = true
+        iv.backgroundColor = .white
+        iv.layer.cornerRadius = 8
+        return iv
+    }()
 
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = UIColor.Theme.text
+        label.numberOfLines = 2
         return label
     }()
 
@@ -54,13 +65,22 @@ final class CartItemCell: UITableViewCell {
         quantityStack.spacing = 8
         quantityStack.alignment = .center
 
-        let mainStack = UIStackView(arrangedSubviews: [infoStack, quantityStack])
+        let textStack = UIStackView(arrangedSubviews: [infoStack, quantityStack])
+        textStack.axis = .horizontal
+        textStack.alignment = .center
+        textStack.distribution = .equalSpacing
+
+        let mainStack = UIStackView(arrangedSubviews: [thumbnailView, textStack])
         mainStack.axis = .horizontal
+        mainStack.spacing = 12
         mainStack.alignment = .center
-        mainStack.distribution = .equalSpacing
 
         contentView.addSubview(mainStack)
         mainStack.pinToEdges(of: contentView, insets: UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 16))
+
+        thumbnailView.translatesAutoresizingMaskIntoConstraints = false
+        thumbnailView.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        thumbnailView.heightAnchor.constraint(equalToConstant: 60).isActive = true
 
         stepper.addTarget(self, action: #selector(stepperChanged), for: .valueChanged)
     }
@@ -76,5 +96,16 @@ final class CartItemCell: UITableViewCell {
         priceLabel.text = String(format: "$%.2f", item.price * Double(item.quantity))
         quantityLabel.text = "Qty: \(item.quantity)"
         stepper.value = Double(item.quantity)
+        if !item.imageURL.isEmpty {
+            thumbnailView.loadImage(from: item.imageURL)
+        }
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        thumbnailView.cancelLoad()
+        thumbnailView.image = nil
+        nameLabel.text = nil
+        priceLabel.text = nil
     }
 }

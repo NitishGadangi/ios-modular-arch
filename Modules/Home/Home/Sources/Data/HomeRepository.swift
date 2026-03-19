@@ -11,7 +11,7 @@ final class HomeRepository: HomeRepositoryProtocol {
     }
 
     func fetchProducts() -> AnyPublisher<[ProductSummary], Error> {
-        let endpoint = Endpoint(path: "/products")
+        let endpoint = FakeStoreAPI.products
         return networkService.request(endpoint, responseType: [ProductSummary].self)
             .mapError { $0 as Error }
             .eraseToAnyPublisher()

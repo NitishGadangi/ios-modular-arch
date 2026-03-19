@@ -92,7 +92,7 @@ final class DetailsViewModel {
                     self?.stateSubject.send(.loaded(detail))
                     self?.analytics.track(AnalyticsEvent(
                         name: "product_viewed",
-                        parameters: ["product_id": detail.id, "product_name": detail.name]
+                        parameters: ["product_id": String(detail.id), "product_name": detail.title]
                     ))
                 }
             )
@@ -102,15 +102,16 @@ final class DetailsViewModel {
     private func addToCart() {
         guard let product = currentProduct else { return }
         let item = CartItem(
-            productId: product.id,
-            name: product.name,
+            productId: String(product.id),
+            name: product.title,
             price: product.price,
-            quantity: 1
+            quantity: 1,
+            imageURL: product.image
         )
         cartService.addItem(item)
         stateSubject.send(.addedToCart(product: product))
         analytics.track(AnalyticsEvent(name: "add_to_cart", parameters: [
-            "product_id": product.id,
+            "product_id": String(product.id),
             "price": "\(product.price)"
         ]))
 

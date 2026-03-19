@@ -1,16 +1,9 @@
 {
-    "id": "1",
-    "name": "Wireless Headphones",
+    "id": 1,
+    "title": "Wireless Headphones",
     "price": 79.99,
-    "image_url": "headphones",
     "description": "Premium wireless headphones with active noise cancellation, 30-hour battery life, and comfortable over-ear design. Features Bluetooth 5.2 and multi-device connectivity.",
-    "specs": [
-        "Active Noise Cancellation",
-        "30-hour battery life",
-        "Bluetooth 5.2",
-        "Multi-device pairing",
-        "Foldable design"
-    ],
-    "rating": 4.5,
-    "review_count": 128
+    "category": "electronics",
+    "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+    "rating": { "rate": 4.5, "count": 128 }
 }

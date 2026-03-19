@@ -11,6 +11,7 @@ let package = Package(
         .library(name: "AnalyticsLib", targets: ["AnalyticsLib"]),
         .library(name: "UIComponents", targets: ["UIComponents"]),
         .library(name: "ConfigLib", targets: ["ConfigLib"]),
+        .library(name: "CacheLib", targets: ["CacheLib"]),
 
         // Interface modules
         .library(name: "SharedRouterInterface", targets: ["SharedRouterInterface"]),
@@ -44,7 +45,12 @@ let package = Package(
             path: "Modules/Libraries/AnalyticsLib/Sources"
         ),
         .target(
+            name: "CacheLib",
+            path: "Modules/Libraries/CacheLib/Sources"
+        ),
+        .target(
             name: "UIComponents",
+            dependencies: ["CacheLib"],
             path: "Modules/Libraries/UIComponents/Sources"
         ),
         .target(
@@ -120,7 +126,6 @@ let package = Package(
                 "CheckoutInterface",
                 "SharedRouterInterface",
                 "CartInterface",
-                "NetworkLib",
                 "AnalyticsLib",
                 "LoggingLib",
                 "UIComponents",
@@ -177,7 +182,6 @@ let package = Package(
                 "Checkout",
                 "CheckoutInterface",
                 "CartInterface",
-                "NetworkLib",
                 "AnalyticsLib",
             ],
             path: "Modules/Checkout/CheckoutTests"

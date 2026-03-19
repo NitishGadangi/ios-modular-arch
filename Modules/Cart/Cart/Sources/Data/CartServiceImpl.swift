@@ -24,7 +24,8 @@ public final class CartServiceImpl: CartServiceProtocol {
                 productId: existing.productId,
                 name: existing.name,
                 price: existing.price,
-                quantity: existing.quantity + item.quantity
+                quantity: existing.quantity + item.quantity,
+                imageURL: existing.imageURL
             )
             current[index] = existing
         } else {
@@ -54,7 +55,8 @@ public final class CartServiceImpl: CartServiceProtocol {
                     productId: existing.productId,
                     name: existing.name,
                     price: existing.price,
-                    quantity: quantity
+                    quantity: quantity,
+                    imageURL: existing.imageURL
                 )
             }
         }

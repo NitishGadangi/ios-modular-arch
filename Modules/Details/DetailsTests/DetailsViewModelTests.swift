@@ -24,7 +24,7 @@ final class DetailsViewModelTests: XCTestCase {
         let expectation = expectation(description: "Product loaded")
         sut.statePublisher.sink { state in
             if case .loaded(let product) = state {
-                XCTAssertEqual(product.name, "Test")
+                XCTAssertEqual(product.title, "Test")
                 expectation.fulfill()
             }
         }.store(in: &cancellables)
@@ -67,8 +67,10 @@ final class DetailsViewModelTests: XCTestCase {
 
     private func makeSUT() -> DetailsViewModel {
         let detail = ProductDetail(
-            id: "1", name: "Test", price: 29.99, imageUrl: "img",
-            description: "desc", specs: ["Spec1"], rating: 4.0, reviewCount: 10
+            id: 1, title: "Test", price: 29.99,
+            description: "desc", category: "electronics",
+            image: "https://example.com/img.jpg",
+            rating: .init(rate: 4.0, count: 10)
         )
         let repo = StubDetailsRepository(detail: detail)
         let useCase = GetProductDetailUseCase(repository: repo)

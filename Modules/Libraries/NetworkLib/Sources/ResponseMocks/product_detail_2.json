@@ -1,16 +1,9 @@
 {
-    "id": "2",
-    "name": "Smart Watch",
+    "id": 2,
+    "title": "Smart Watch",
     "price": 199.99,
-    "image_url": "stopwatch",
     "description": "Feature-rich smartwatch with heart rate monitoring, GPS tracking, and water resistance up to 50 meters. Includes customizable watch faces and 7-day battery life.",
-    "specs": [
-        "Heart Rate Monitor",
-        "Built-in GPS",
-        "Water Resistant (50m)",
-        "7-day battery life",
-        "Customizable watch faces"
-    ],
-    "rating": 4.3,
-    "review_count": 95
+    "category": "electronics",
+    "image": "https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg",
+    "rating": { "rate": 4.3, "count": 95 }
 }

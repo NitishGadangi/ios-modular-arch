@@ -60,7 +60,8 @@ final class AppConfigurator {
         let configuration = NetworkConfiguration(
             baseURL: baseURL,
             timeoutInterval: timeout,
-            logRequests: logRequests
+            logRequests: logRequests,
+            logResponses: logRequests
         )
         networkService.configure(with: configuration)
         logger.info("Network configured: baseURL=\(baseURL), timeout=\(timeout)s, logRequests=\(logRequests)")

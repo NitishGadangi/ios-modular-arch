@@ -1,16 +1,9 @@
 {
-    "id": "3",
-    "name": "Laptop Stand",
+    "id": 3,
+    "title": "Laptop Stand",
     "price": 49.99,
-    "image_url": "desktopcomputer",
     "description": "Ergonomic aluminum laptop stand with adjustable height and angle. Compatible with laptops up to 17 inches. Improves posture and airflow for cooler performance.",
-    "specs": [
-        "Adjustable height and angle",
-        "Aluminum construction",
-        "Supports up to 17-inch laptops",
-        "Non-slip silicone pads",
-        "Cable management slot"
-    ],
-    "rating": 4.7,
-    "review_count": 203
+    "category": "electronics",
+    "image": "https://fakestoreapi.com/img/61IBBVJvSDL._AC_SY879_.jpg",
+    "rating": { "rate": 4.7, "count": 203 }
 }

@@ -47,7 +47,7 @@ final class HomeViewModelTests: XCTestCase {
 
     func testLoadProductsSetsProducts() {
         let products = [
-            ProductSummary(id: "1", name: "Test", price: 9.99, imageUrl: "img", description: "desc")
+            ProductSummary(id: 1, title: "Test", price: 9.99, description: "desc", category: "electronics", image: "https://example.com/img.jpg", rating: .init(rate: 4.0, count: 10))
         ]
         let sut = makeSUT(products: products)
 
@@ -55,7 +55,7 @@ final class HomeViewModelTests: XCTestCase {
         sut.statePublisher.sink { state in
             if case .loaded(let loadedProducts) = state {
                 XCTAssertEqual(loadedProducts.count, 1)
-                XCTAssertEqual(loadedProducts.first?.name, "Test")
+                XCTAssertEqual(loadedProducts.first?.title, "Test")
                 expectation.fulfill()
             }
         }.store(in: &cancellables)

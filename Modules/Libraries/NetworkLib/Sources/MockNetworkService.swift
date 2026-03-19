@@ -16,7 +16,7 @@ public final class MockNetworkService: NetworkServiceProtocol {
         self.configuration = configuration
     }
 
-    public func request<T: Decodable>(_ endpoint: Endpoint, responseType: T.Type) -> AnyPublisher<T, NetworkError> {
+    public func request<T: Decodable>(_ endpoint: any Endpoint, responseType: T.Type) -> AnyPublisher<T, NetworkError> {
         if configuration?.logRequests == true {
             print("[Network] \(endpoint.method.rawValue) \(configuration?.baseURL ?? "")\(endpoint.path)")
         }
@@ -40,17 +40,13 @@ public final class MockNetworkService: NetworkServiceProtocol {
         }
     }
 
-    private func mapEndpointToFile(_ endpoint: Endpoint) -> String {
+    private func mapEndpointToFile(_ endpoint: any Endpoint) -> String {
         switch endpoint.path {
         case "/products":
             return "products"
         case let path where path.hasPrefix("/products/"):
             let productId = String(path.dropFirst("/products/".count))
             return "product_detail_\(productId)"
-        case "/cart":
-            return "cart"
-        case "/checkout":
-            return "checkout_response"
         default:
             return endpoint.path.replacingOccurrences(of: "/", with: "_")
         }

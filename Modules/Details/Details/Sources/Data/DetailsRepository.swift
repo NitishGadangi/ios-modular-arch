@@ -11,7 +11,7 @@ final class DetailsRepository: DetailsRepositoryProtocol {
     }
 
     func fetchProductDetail(id: String) -> AnyPublisher<ProductDetail, Error> {
-        let endpoint = Endpoint(path: "/products/\(id)")
+        let endpoint = FakeStoreAPI.product(id: Int(id) ?? 0)
         return networkService.request(endpoint, responseType: ProductDetail.self)
             .mapError { $0 as Error }
             .eraseToAnyPublisher()

@@ -107,7 +107,7 @@ final class DetailsViewController: BaseViewController {
         case .loaded(let product):
             showLoading(false)
             productInfoView.configure(with: product)
-            title = product.name
+            title = product.title
             addToCartButton.setTitle("Add to Cart", for: .normal)
             addToCartButton.backgroundColor = UIColor.Theme.primary
         case .addedToCart:

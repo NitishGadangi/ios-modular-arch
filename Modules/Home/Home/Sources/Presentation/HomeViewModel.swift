@@ -87,6 +87,10 @@ final class HomeViewModel {
         navigationDelegate?.homeViewModel(self, didRequest: .productSelected(id: id))
     }
 
+    func selectProduct(_ product: ProductSummary) {
+        didSelectProduct(id: String(product.id))
+    }
+
     private func didTapCart() {
         navigationDelegate?.homeViewModel(self, didRequest: .cartTapped)
     }
