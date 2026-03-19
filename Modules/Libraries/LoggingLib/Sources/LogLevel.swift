@@ -10,6 +10,16 @@ public enum LogLevel: Int, Comparable {
         lhs.rawValue < rhs.rawValue
     }
 
+    public init(from string: String) {
+        switch string.lowercased() {
+        case "debug": self = .debug
+        case "info": self = .info
+        case "warning": self = .warning
+        case "error": self = .error
+        default: self = .debug
+        }
+    }
+
     public var prefix: String {
         switch self {
         case .debug: return "[DEBUG]"

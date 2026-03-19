@@ -38,4 +38,8 @@ public final class TwoTierImageCache {
         l1.removeAll()
         l2.removeAll()
     }
+
+    public func clearCacheIfNeeded() {
+        // TODO: Implement cache clearing logic based on config/version policy
+    }
 }

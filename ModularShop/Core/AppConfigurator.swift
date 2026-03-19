@@ -3,6 +3,7 @@ import LoggingLib
 import AnalyticsLib
 import NetworkLib
 import ConfigLib
+import CacheLib
 
 final class AppConfigurator {
     private var logger: LoggerProtocol
@@ -29,6 +30,7 @@ final class AppConfigurator {
         setupLogging()
         setupNetwork()
         setupAnalytics()
+        setupCache()
         setupAppearance()
 
         let durationMs = (CFAbsoluteTimeGetCurrent() - startTime) * 1000
@@ -44,7 +46,7 @@ final class AppConfigurator {
 
     private func setupLogging() {
         let levelString = config.string(for: .logLevel, default: "debug")
-        logger.minimumLevel = logLevel(from: levelString)
+        logger.minimumLevel = LogLevel(from: levelString)
         logger.info("Logging configured: level=\(levelString)")
     }
 
@@ -53,19 +55,19 @@ final class AppConfigurator {
         let timeout = config.double(for: .networkTimeoutSeconds, default: 30)
 
         #if DEBUG
-        let logRequests = true
+        let loggingEnabled = true
         #else
-        let logRequests = false
+        let loggingEnabled = false
         #endif
 
         let configuration = NetworkConfiguration(
             baseURL: baseURL,
             timeoutInterval: timeout,
-            logRequests: logRequests,
-            logResponses: logRequests
+            logRequests: loggingEnabled,
+            logResponses: loggingEnabled
         )
         networkService.configure(with: configuration)
-        logger.info("Network configured: baseURL=\(baseURL), timeout=\(timeout)s, logRequests=\(logRequests)")
+        logger.info("Network configured: baseURL=\(baseURL), timeout=\(timeout)s, logRequests=\(loggingEnabled)")
     }
 
     private func setupAnalytics() {
@@ -75,6 +77,11 @@ final class AppConfigurator {
             analytics.track(AnalyticsEvent(name: "app_launched", parameters: [:]))
         }
         logger.info("Analytics configured: enabled=\(enabled)")
+    }
+
+    private func setupCache() {
+        TwoTierImageCache.shared.clearCacheIfNeeded()
+        logger.info("Cache configured")
     }
 
     private func setupAppearance() {
@@ -87,15 +94,4 @@ final class AppConfigurator {
         logger.info("Appearance configured")
     }
 
-    // MARK: - Helpers
-
-    private func logLevel(from string: String) -> LogLevel {
-        switch string.lowercased() {
-        case "debug": return .debug
-        case "info": return .info
-        case "warning": return .warning
-        case "error": return .error
-        default: return .debug
-        }
-    }
 }
