@@ -43,7 +43,7 @@ final class HomeViewController: BaseViewController {
     private func setupUI() {
         view.backgroundColor = UIColor.Theme.secondaryBackground
         view.addSubview(collectionView)
-        collectionView.pinToSafeArea(of: view)
+        collectionView.pinToEdges(of: view)
     }
 
     private func setupNavBar() {
