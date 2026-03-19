@@ -14,6 +14,8 @@ A reference iOS app demonstrating clean modular architecture with proper segrega
 
 ## Key Rules
 
+- **Always ask clarifying questions before acting.** When planning or implementing anything, ask questions first — never make assumptions or decisions independently without the user's explicit permission.
+- **No unnecessary comments in code.** Code should speak for itself. Only add comments when there is an explicit need to explain something unusual or non-obvious.
 - **Never run the project or tests automatically.** Always ask the user to build/run from Xcode manually, then ask what to verify.
 - **UIKit only** — programmatic views. No XIBs, Storyboards, or SwiftUI.
 - **Keep everything minimal** — UI, domain, and data layers. Small implementations that demonstrate the pattern, not production-scale features.
