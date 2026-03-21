@@ -4,30 +4,34 @@ Yet another iOS modular architecture sample — but this one's worth stealing fr
 
 ## Why This Exists
 
+The way we build apps has changed. AI can write your networking layer, generate view controllers, and scaffold features in minutes. But the bottleneck has shifted. Writing code is no longer the hard part. Structuring it is. In a world where AI makes everyone a fast coder, the ones who understand structure become the architects that teams actually need.
+
 Most modular architecture samples stop at "here's how to split code into modules." This project goes further. The goal is to incrementally build out a real-world iOS app that tackles the problems you actually hit at scale — not just the clean diagrams.
 
-We're working through topics like:
+We are working through topics like:
 - Clean module boundaries with protocol-based interfaces
-- Basic dependency injection without third-party frameworks
-- Smarter app launch orchestration
-- Benchmarking module builds at scale
-- Better localisation patterns
-- Type-safe analytics
+- Dependency injection without third-party frameworks
+- App launch orchestration and optimization
+- Type-safe analytics with batching
+- Configuration management with remote config
+- Benchmarking and performance
 - ...and more as we go
 
 Each topic gets refined iteratively, so the codebase evolves the way a real project would.
 
-## Blogs
+## Blog Series: Building iOS Apps That Scale
 
-WIP — each major topic will have an accompanying blog post. Stay tuned.
+Each major topic has an accompanying blog post. Read them in the [docs folder](docs/README.md) or on Medium/Hashnode.
+
+1. **[Part 1: The Foundation](docs/01-the-foundation.md)** — Feature modules, dependency inversion, and the wiring that holds it all together.
+
+*More articles coming soon.*
 
 ## App Overview
 
 ModularShop is a lightweight e-commerce app built with **UIKit**, **Combine**, and **Swift Package Manager**. Every feature lives in its own SPM module with a clear interface-implementation split, making it easy to build, test, and reason about in isolation.
 
 ### Modules
-
-The project splits into **Feature Modules** (screens and business logic) and **Library Modules** (shared infrastructure).
 
 **Feature Modules** — each has an `Interface` (public protocols/models) and an `Implementation` (coordinator, view model, view controller, repository):
 
@@ -43,65 +47,17 @@ The project splits into **Feature Modules** (screens and business logic) and **L
 
 | Module | What it does |
 |--------|-------------|
-| **ConfigLib** | Reads runtime config from `AppConfig.plist` |
-| **LoggingLib** | Simple levelled logger (`debug`, `info`, `warning`, `error`) |
-| **NetworkLib** | Protocol-based networking with mock support |
-| **AnalyticsLib** | Event tracking with batching and in-memory cache |
-| **UIComponents** | Base view controller, theme colours, layout helpers |
+| **NetworkLib** | Protocol-based HTTP client with request/response logging |
+| **CacheLib** | Two-tier image cache (memory + disk) |
+| **LoggingLib** | Console logger with configurable log levels |
+| **AnalyticsLib** | Event tracking with batching and flushing |
+| **ConfigLib** | App configuration with remote config support |
+| **UIComponents** | Reusable UI elements and extensions |
 
 ### Dependency Graph
-Okay! I agree this looks shit !! But I will soon update this with a much better dependency graph diagram.
 
-```mermaid
-graph TD
-    App[ModularShop App]
-
-    App --> CompositionRoot
-    App --> AppConfigurator
-    App --> DeeplinkHandler
-
-    CompositionRoot --> SharedRouter
-
-    SharedRouter --> HomeInterface
-    SharedRouter --> DetailsInterface
-    SharedRouter --> CartInterface
-    SharedRouter --> CheckoutInterface
-
-    Home --> HomeInterface
-    Home --> SharedRouterInterface
-    Home --> NetworkLib
-    Home --> AnalyticsLib
-    Home --> LoggingLib
-    Home --> UIComponents
-
-    Details --> DetailsInterface
-    Details --> SharedRouterInterface
-    Details --> CartInterface
-    Details --> NetworkLib
-    Details --> AnalyticsLib
-    Details --> LoggingLib
-    Details --> UIComponents
-
-    Cart --> CartInterface
-    Cart --> SharedRouterInterface
-    Cart --> NetworkLib
-    Cart --> AnalyticsLib
-    Cart --> LoggingLib
-    Cart --> UIComponents
-
-    Checkout --> CheckoutInterface
-    Checkout --> SharedRouterInterface
-    Checkout --> CartInterface
-    Checkout --> NetworkLib
-    Checkout --> AnalyticsLib
-    Checkout --> LoggingLib
-    Checkout --> UIComponents
-
-    AppConfigurator --> ConfigLib
-    AppConfigurator --> LoggingLib
-    AppConfigurator --> NetworkLib
-    AppConfigurator --> AnalyticsLib
-```
+![Module Dependency Graph](docs/images/01-foundation/03-module-dependency-graph.png)
+*Full dependency graph across all modules. Arrows point from dependent to dependency.*
 
 ### Root Components
 
@@ -123,7 +79,7 @@ Deeplinks are supported via the `modularshop://` scheme (e.g. `modularshop://pro
 ## Getting Started
 
 ```bash
-git clone https://github.com/nicklama/ios-modular-arch.git
+git clone https://github.com/NitishGadangi/ios-modular-arch.git
 cd ios-modular-arch
 open ModularShop.xcodeproj
 ```

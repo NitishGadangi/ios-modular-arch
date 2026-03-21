@@ -1,4 +1,4 @@
-# The Foundation: Structuring an iOS App for Modular Scale
+# Building iOS Apps That Scale | Part 1: The Foundation
 
 **Feature modules, dependency inversion, and the wiring that holds it all together.**
 
@@ -77,8 +77,6 @@ public final class HomeCoordinator: HomeBuildable {
 
 Notice the imports at the top of the actual file: `HomeInterface`, `SharedRouterInterface`, `NetworkLib`, `AnalyticsLib`. Only interfaces and libraries. There is no `import Details` or `import Cart` anywhere. This is the key rule: **no feature depends on another feature's implementation.** Home does not know Details exists. Details does not know Cart exists. They communicate through interface protocols, and a shared router handles the actual screen transitions. We will get to that shortly.
 
-**Why this three-way split?** Because it gives you real isolation. When a developer changes something inside the Home implementation, the Details module does not recompile. The test target does not accidentally leak internal types into other modules. And if you ever want to run a feature in isolation (say, with its own Xcode scheme for faster iteration), the interface boundary is already clean enough to support that.
-
 **Test target** (`HomeTests`): Uses `@testable import Home` to access internals. Stubs and spies are local to the test target. Here is how a typical test looks:
 
 ```swift
@@ -103,6 +101,8 @@ func testNavigationOnProductSelected() {
 *[View on GitHub](https://github.com/NitishGadangi/ios-modular-arch/blob/3b24d4a/Modules/Home/HomeTests/HomeViewModelTests.swift)*
 
 The `makeSUT()` pattern (make System Under Test) wires up just enough to test the ViewModel in isolation. `StubHomeRepository` returns canned data, `StubAnalytics` is a no-op, and `SpyNavDelegate` captures navigation events so we can assert on them. Because every dependency is injected through a protocol, we can stub any of them. This is the testability payoff of the entire module structure.
+
+**Why this three-way split?** Because it gives you real isolation. When a developer changes something inside the Home implementation, the Details module does not recompile. The test target does not accidentally leak internal types into other modules. And if you ever want to run a feature in isolation (say, with its own Xcode scheme for faster iteration), the interface boundary is already clean enough to support that.
 
 While each feature module can have its own internal architecture, we went with MVVM + Coordinator across the board. ViewModels expose state via `CurrentValueSubject` and accept actions via `PassthroughSubject`. Coordinators build screens and handle navigation. Consistent, but not enforced. A new feature could use a different pattern without affecting anything else.
 
@@ -145,7 +145,7 @@ This matters for a few concrete reasons:
 The same pattern applies across the board. Details depends on `DetailsInterface`, `SharedRouterInterface`, and `CartInterface` (because it needs to add items to cart). But it imports `CartInterface`, not `Cart`. It knows the protocol for adding to cart. It does not know or care how cart storage is implemented.
 
 ![Module Dependency Graph](images/01-foundation/03-module-dependency-graph.png)
-*Full dependency graph across all modules, color-coded by layer.*
+*Full dependency graph across all modules.*
 
 ## SPM: One Package.swift for everything
 
