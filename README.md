@@ -6,8 +6,6 @@ Yet another iOS modular architecture sample — but this one's worth stealing fr
 
 The way we build apps has changed. AI can write your networking layer, generate view controllers, and scaffold features in minutes. But the bottleneck has shifted. Writing code is no longer the hard part. Structuring it is. In a world where AI makes everyone a fast coder, the ones who understand structure become the architects that teams actually need.
 
-Most modular architecture samples stop at "here's how to split code into modules." This project goes further. The goal is to incrementally build out a real-world iOS app that tackles the problems you actually hit at scale — not just the clean diagrams.
-
 We are working through topics like:
 - Clean module boundaries with protocol-based interfaces
 - Dependency injection without third-party frameworks
@@ -19,9 +17,11 @@ We are working through topics like:
 
 Each topic gets refined iteratively, so the codebase evolves the way a real project would.
 
-## Blog Series: Building iOS Apps That Scale
+## Blog Series: Building Modular iOS Apps That Scale
 
 Each major topic has an accompanying blog post. Read them in the [docs folder](docs/README.md) or on Medium/Hashnode.
+
+Use the [Releases](https://github.com/NitishGadangi/ios-modular-arch/releases) tab to browse the codebase at the exact state of each article.
 
 1. **[Part 1: The Foundation](docs/01-the-foundation.md)** — Feature modules, dependency inversion, and the wiring that holds it all together.
 

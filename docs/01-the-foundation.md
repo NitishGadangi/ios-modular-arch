@@ -1,4 +1,4 @@
-# Building iOS Apps That Scale | Part 1: The Foundation
+# Building Modular iOS Apps That Scale | Part 1: The Foundation
 
 **Feature modules, dependency inversion, and the wiring that holds it all together.**
 
